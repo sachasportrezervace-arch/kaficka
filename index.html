@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="cs">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#141B2B">
+<title>Kafíčka</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='70' y='40' width='22' height='20' rx='10' fill='none' stroke='%23F7F3EA' stroke-width='7'/%3E%3Ccircle cx='46' cy='50' r='40' fill='%23F7F3EA'/%3E%3Ccircle cx='46' cy='50' r='31' fill='%233B2219'/%3E%3Ccircle cx='46' cy='50' r='18' fill='%23FBF6EC'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@500..900&family=Schibsted+Grotesk:wght@400..800&family=Sedgwick+Ave&display=swap">
+<style>
+/* Svět: pražírna po zavírací době. Deska je jutový pytel se šablonovým potiskem na noční modrém pultu,
+   hrnky shora, vzkazy fixou na ubrousku. Mobil první; od 900 px deska vlevo a ovládání vpravo. */
+:root {
+  --night: #141B2B; --night-2: #1D2740; --night-3: #26324F; --line: #34415F;
+  --text: #EFE8D9; --muted: #A9B3C7;
+  --burlap: #B8935F; --burlap-dk: #9A774A; --stencil: #1E2A4A;
+  --red: #C23A26; --red-dk: #A32E1C; --red-lt: #F0806B;
+  --jade: #A9C79B;
+  --porcelain: #F7F3EA; --espresso: #3B2219; --latte: #C9965F; --foam: #FBF6EC;
+  --napkin: #F3EEE3; --marker: #22305A;
+  --stencil-font: "Big Shoulders Stencil", "Arial Narrow", sans-serif;
+  --ui: "Schibsted Grotesk", system-ui, sans-serif;
+  --hand: "Sedgwick Ave", "Comic Sans MS", cursive;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100dvh; background: var(--night); color: var(--text);
+  font: 400 16px/1.5 var(--ui);
+  background-image: radial-gradient(120% 70% at 50% 0%, #1E2944 0%, var(--night) 60%);
+  background-attachment: fixed;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+::selection { background: var(--red); color: #fff; }
+input, textarea, select { caret-color: var(--red-lt); }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--jade); outline-offset: 3px; border-radius: 6px; }
+button { font: inherit; color: inherit; }
+a { color: var(--red-lt); text-underline-offset: .2em; }
+
+/* ---------- top bar ---------- */
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1080px; margin: 0 auto; }
+.logo { font: 800 30px/1 var(--stencil-font); letter-spacing: .02em; text-transform: uppercase; color: var(--porcelain); text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.logo svg { width: 30px; height: 30px; }
+.top-meta { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
+.iconbtn { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: var(--night-2); cursor: pointer; padding: 0 12px; font-size: 14px; font-weight: 600; }
+.iconbtn:hover { background: var(--night-3); }
+.iconbtn svg { width: 20px; height: 20px; }
+
+main { max-width: 1080px; margin: 0 auto; padding: 0 16px 48px; }
+.narrow { max-width: 520px; margin: 0 auto; }
+
+/* ---------- type ---------- */
+h1, h2, .stencil { font-family: var(--stencil-font); text-transform: uppercase; letter-spacing: .015em; font-weight: 800; line-height: .95; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(40px, 11vw, 64px); }
+h2 { font-size: 30px; }
+p { margin: 0; }
+.lead { font-size: 18px; color: var(--text); text-wrap: pretty; }
+.dim { color: var(--muted); }
+.small { font-size: 14px; }
+
+/* ---------- controls ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px;
+  border-radius: 14px; border: 0; cursor: pointer; font: 700 17px/1.1 var(--ui); text-decoration: none;
+  background: var(--red); color: #fff; box-shadow: 0 6px 14px -6px rgba(0, 0, 0, .55), inset 0 -2px 0 rgba(0,0,0,.18);
+  transition: transform 160ms var(--ease), background-color 160ms;
+}
+.btn:hover { background: var(--red-dk); }
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn:disabled { opacity: .45; cursor: default; transform: none; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; }
+.btn.ghost:hover { background: var(--night-2); }
+.btn.wide { width: 100%; }
+.btn span.sub { font-weight: 500; font-size: 14px; opacity: .8; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 auto; }
+
+label.f { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--muted); }
+input[type=text], select, textarea {
+  width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  background: var(--night-2); color: var(--text); font: 500 17px/1.3 var(--ui);
+}
+input::placeholder, textarea::placeholder { color: #8A94AA; }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 8l5 5 5-5' fill='none' stroke='%23A9B3C7' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
+.count, .foot { font-variant-numeric: tabular-nums; }
+.count { font-size: 12px; color: var(--muted); text-align: right; font-weight: 500; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 14px; background: var(--night-2); border: 1px solid var(--line); }
+.seg label { position: relative; display: block; }
+.seg input { position: absolute; opacity: 0; inset: 0; }
+.seg span { display: grid; place-items: center; min-height: 48px; border-radius: 10px; font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; padding: 4px 8px; font-size: 15px; }
+.seg input:checked + span { background: var(--porcelain); color: var(--night); }
+.seg input:focus-visible + span { outline: 3px solid var(--jade); outline-offset: 2px; }
+
+.panel { background: var(--night-2); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.stack { display: grid; gap: 16px; }
+.stack-lg { display: grid; gap: 28px; }
+
+/* ---------- burlap sack (board + labels) ---------- */
+.sack {
+  position: relative; color: var(--stencil);
+  background-color: var(--burlap);
+  background-image:
+    repeating-linear-gradient(0deg, rgba(70, 45, 15, .16) 0 1px, transparent 1px 4px),
+    repeating-linear-gradient(90deg, rgba(255, 238, 205, .12) 0 2px, transparent 2px 5px),
+    radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(60, 38, 12, .35) 100%);
+  border-radius: 6px;
+  box-shadow: 0 24px 40px -18px rgba(0, 0, 0, .7), 0 2px 0 rgba(255, 240, 210, .15) inset;
+}
+.sack-label { font: 800 15px/1 var(--stencil-font); letter-spacing: .12em; text-transform: uppercase; text-align: center; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sack-stripe { height: 6px; background: var(--red); opacity: .8; margin: 0 -2px; mask: repeating-linear-gradient(90deg, #000 0 14px, transparent 14px 16px); }
+
+/* ---------- cups ---------- */
+.cup { display: block; width: 100%; height: 100%; overflow: visible; }
+.board .cup, .flycup .cup, .slot .cup { filter: drop-shadow(0 4px 3px rgba(30, 16, 4, .45)); }
+
+/* ---------- game layout ---------- */
+.game { display: grid; gap: 14px; }
+@media (min-width: 900px) {
+  .game { grid-template-columns: minmax(0, 560px) minmax(0, 1fr); align-items: start; gap: 18px 36px; }
+  .game > .table { grid-column: 1; grid-row: 1 / span 6; position: sticky; top: 12px; }
+  .game > :not(.table) { grid-column: 2; }
+}
+.table { display: grid; gap: 10px; }
+
+/* opponent's side of the table */
+.side { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 12px 8px 8px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--line); }
+.tag { flex: none; font: 800 18px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 9px 12px 8px; border-radius: 10px; background: var(--porcelain); color: var(--night); max-width: 9.5em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side.on .tag { background: var(--jade); }
+.side .what { flex: 1; min-width: 0; font-size: 15px; line-height: 1.3; }
+.side .what b { display: block; font-weight: 700; }
+.side .what span { color: var(--muted); font-size: 13px; }
+.slot { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; }
+.slot.empty { border: 2px dashed var(--line); }
+.steam { width: 34px; height: 34px; flex: none; }
+.steam path { fill: none; stroke: var(--muted); stroke-width: 2.4; stroke-linecap: round; opacity: .8; }
+@media (prefers-reduced-motion: no-preference) {
+  .steam path { animation: steam 2.4s ease-in-out infinite; }
+  .steam path:nth-child(2) { animation-delay: .5s; }
+  .steam path:nth-child(3) { animation-delay: 1s; }
+}
+@keyframes steam { 0% { transform: translateY(4px); opacity: 0; } 40% { opacity: .9; } 100% { transform: translateY(-6px); opacity: 0; } }
+
+/* the board */
+.boardsack { padding: 12px 12px 10px; }
+.boardsack .sack-label { padding: 2px 0 10px; }
+.boardsack .foot { display: flex; justify-content: space-between; padding: 8px 2px 0; font: 700 13px/1 var(--stencil-font); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; aspect-ratio: 1; position: relative; }
+.cell {
+  position: relative; border: 0; padding: 7%; background: none; cursor: pointer; border-radius: 50%; aspect-ratio: 1;
+  display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+}
+.cell::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; border: 2px dashed rgba(30, 42, 74, .42); transition: border-color 160ms, transform 200ms var(--ease); }
+.cell .coord { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 700 14px/1 var(--stencil-font); letter-spacing: .08em; opacity: .4; pointer-events: none; }
+.cell.full::before { border-color: transparent; }
+.cell.full .coord { display: none; }
+.cell .cupbox { width: 100%; height: 100%; position: relative; z-index: 1; }
+.board.locked .cell { cursor: default; }
+.board:not(.locked) .cell:not(.full):hover::before { border-color: var(--stencil); transform: scale(1.04); }
+.cell.ghost .cupbox { opacity: .62; }
+.cell.ghost::before { border: 3px solid var(--red); border-style: solid; }
+.cell.last::after { content: ""; position: absolute; inset: 2%; border-radius: 50%; border: 2px solid rgba(30, 42, 74, .55); }
+.cell.win::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--red); box-shadow: 0 0 0 3px rgba(247, 243, 234, .5); }
+.cell.win.pop::after { animation: ring 520ms var(--ease) both; animation-delay: var(--d, 0ms); }
+@keyframes ring { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.cell.dimmed .cupbox { opacity: .45; }
+
+/* your side: the hand */
+.hand { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--night-2); border: 1px solid var(--line); }
+.hand .slot { width: 84px; height: 84px; }
+.hand .slot.empty { border-color: #45526F; }
+.hand h3 { margin: 0 0 2px; font: 700 18px/1.25 var(--ui); }
+.hand .desc { font-size: 14px; color: var(--muted); }
+.hand .act { grid-column: 1 / -1; display: grid; gap: 10px; }
+.hand.on { border-color: var(--jade); box-shadow: 0 0 0 1px var(--jade) inset; }
+
+/* napkin note */
+.napkin {
+  justify-self: start; max-width: 100%; position: relative; padding: 12px 16px 13px; color: var(--marker);
+  font: 400 21px/1.15 var(--hand); transform: rotate(-1.6deg); border-radius: 3px;
+  background-color: var(--napkin);
+  background-image: repeating-linear-gradient(45deg, rgba(120, 100, 70, .07) 0 1px, transparent 1px 9px), repeating-linear-gradient(-45deg, rgba(120, 100, 70, .07) 0 1px, transparent 1px 9px);
+  box-shadow: 0 8px 14px -8px rgba(0, 0, 0, .6);
+  overflow-wrap: anywhere;
+}
+.napkin small { display: block; font: 600 11px/1 var(--ui); letter-spacing: .08em; text-transform: uppercase; color: #6B6455; margin-bottom: 6px; }
+
+/* tray of remaining cups */
+.tray { padding: 16px; border-radius: 18px; background: var(--night-2); border: 1px solid var(--jade); display: grid; gap: 14px; }
+.tray h3 { margin: 0; font: 700 18px/1.25 var(--ui); }
+.cups { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; }
+.pick { border: 0; background: var(--night-3); border-radius: 14px; aspect-ratio: 1; padding: 8px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
+.pick:hover { background: #2E3B5C; }
+.pick[aria-pressed="true"] { background: var(--burlap); transform: translateY(-4px); box-shadow: 0 0 0 3px var(--red), 0 10px 18px -8px rgba(0,0,0,.7); }
+.pick:disabled { cursor: default; }
+.chosen { min-height: 22px; font-size: 15px; }
+.chosen b { color: var(--porcelain); }
+.pool { display: grid; gap: 8px; }
+.pool .cups { grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.pool .pick { padding: 4px; border-radius: 10px; background: transparent; cursor: default; }
+
+/* status bits */
+.net { color: var(--red-lt); font-size: 14px; }
+.wait { display: grid; gap: 12px; }
+
+/* end */
+.result { padding: 20px; border-radius: 18px; display: grid; gap: 14px; }
+.result .shared { font-size: 17px; font-weight: 600; }
+.ticket { position: relative; display: grid; gap: 6px; padding: 16px 18px; border-radius: 12px; background: var(--napkin); color: var(--night); }
+.ticket .lbl { font: 700 12px/1 var(--ui); letter-spacing: .1em; text-transform: uppercase; color: #6B6455; }
+.ticket .res { font-size: 19px; font-weight: 700; line-height: 1.25; }
+.ticket.stamped { padding-right: 116px; }
+.ticket .ser { font-size: 14px; color: #4D5163; }
+.stamp { position: absolute; right: 10px; top: 50%; width: 92px; height: 92px; margin-top: -46px; border-radius: 50%; border: 3px solid var(--red); color: var(--red); display: grid; place-items: center; text-align: center; font: 800 15px/1 var(--stencil-font); letter-spacing: .04em; text-transform: uppercase; transform: rotate(-12deg); padding: 10px; background: rgba(243, 238, 227, .6); }
+.stamp.in { animation: stampin 420ms var(--ease) 700ms both; }
+@keyframes stampin { from { transform: rotate(-30deg) scale(2.2); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 1; } }
+
+/* setup & intro */
+.hero { display: grid; gap: 12px; padding: 18px 0 6px; }
+.introsack { padding: 22px 20px 20px; display: grid; gap: 14px; }
+.introsack .names { font: 900 clamp(34px, 10vw, 50px)/.95 var(--stencil-font); text-transform: uppercase; text-align: center; overflow-wrap: anywhere; }
+.introsack .names i { font-style: normal; color: var(--red); display: block; font-size: max(20px, .6em); margin: 4px 0; }
+.introsack .bet { text-align: center; font: 600 17px/1.35 var(--ui); color: var(--stencil); }
+.introsack .bet b { display: block; font: 800 13px/1 var(--stencil-font); letter-spacing: .14em; text-transform: uppercase; opacity: .75; margin-bottom: 6px; }
+.cupsrow { display: flex; justify-content: center; gap: 4px; }
+.cupsrow > div { width: 56px; height: 56px; }
+.recent a { display: flex; justify-content: space-between; gap: 8px; }
+.recent a span { font-weight: 500; opacity: .75; font-size: 14px; }
+
+details.rules { border-radius: 16px; border: 1px solid var(--line); background: rgba(29, 39, 64, .55); }
+details.rules summary { cursor: pointer; min-height: 48px; display: flex; align-items: center; padding: 0 16px; font-weight: 700; list-style: none; }
+details.rules summary::-webkit-details-marker { display: none; }
+details.rules summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--muted); }
+details.rules[open] summary::after { content: "–"; }
+details.rules .body { padding: 0 16px 16px; display: grid; gap: 10px; font-size: 15px; }
+details.rules ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.legend div { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.legend .cupbox { width: 40px; height: 40px; flex: none; }
+
+/* share */
+textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height: 1.45; }
+
+/* hand-over overlay: the main scene */
+.handover { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; background: rgba(14, 19, 32, .78); cursor: pointer; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.handover .who { font: 900 clamp(30px, 9vw, 48px)/.95 var(--stencil-font); text-transform: uppercase; text-align: center; letter-spacing: .02em; }
+.handover .who span { display: block; color: var(--jade); font-size: .5em; letter-spacing: .14em; margin-top: 8px; }
+.handover .big { width: min(56vw, 230px); aspect-ratio: 1; }
+.handover .desc { text-align: center; font-size: 16px; color: var(--muted); }
+.handover .napkin { justify-self: center; font-size: 25px; max-width: min(86vw, 360px); text-align: center; }
+.handover .tap { font-size: 13px; color: var(--muted); }
+.flycup { position: fixed; z-index: 50; pointer-events: none; will-change: transform; }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60; background: var(--porcelain); color: var(--night); padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 15px; box-shadow: 0 12px 24px -10px rgba(0,0,0,.7); max-width: calc(100vw - 32px); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
+}
+</style>
+
+<header class="top">
+  <a class="logo" href="./" id="logo" aria-label="Kafíčka, nová hra"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="70" y="40" width="22" height="20" rx="10" fill="none" stroke="#F7F3EA" stroke-width="7"/><circle cx="46" cy="50" r="40" fill="#F7F3EA"/><circle cx="46" cy="50" r="31" fill="#3B2219"/><circle cx="46" cy="50" r="17" fill="#FBF6EC"/></svg>Kafíčka</a>
+  <div class="top-meta" id="topMeta"></div>
+  <button class="iconbtn" id="copyTopBtn" type="button" aria-label="Zkopírovat odkaz na hru" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="iconbtn" id="newGameBtn" type="button" hidden>Nová hra</button>
+</header>
+
+<main>
+  <!-- ---------- setup ---------- -->
+  <section id="setup" class="narrow stack-lg" hidden>
+    <div class="hero">
+      <h1>Podám ti hrnek.</h1>
+      <p class="lead">Quarto s kafem pro dva. Hrnek si nevybíráš, podá ti ho soupeř. Ty ho položíš a vybereš hrnek pro něj. Čtyři v řadě s něčím společným vyhrávají.</p>
+    </div>
+    <form id="setupForm" class="stack" autocomplete="off">
+      <label class="f">Tvoje jméno<input type="text" id="nameX" maxlength="16" required placeholder="třeba Mark"></label>
+      <label class="f">Koho vyzýváš<input type="text" id="nameO" maxlength="16" required placeholder="jméno soupeře"></label>
+      <div class="f" role="radiogroup" aria-labelledby="starterLbl">
+        <span id="starterLbl" class="f">Kdo podává první hrnek</span>
+        <div class="seg">
+          <label><input type="radio" name="starter" value="x" checked><span>Já</span></label>
+          <label><input type="radio" name="starter" value="o"><span id="starterO">Soupeř</span></label>
+        </div>
+      </div>
+      <label class="f">O co hrajeme
+        <select id="stakeSel">
+          <option value="1" selected>Kdo prohraje, platí kafe.</option>
+          <option value="2">Vítěz vybírá místo na rande.</option>
+          <option value="3">Kdo prohraje, zve na zmrzlinu.</option>
+          <option value="4">Vítěz vybírá film na večer.</option>
+          <option value="5">Kdo prohraje, pravdivě odpoví na jednu otázku.</option>
+          <option value="6">Jen o čest.</option>
+          <option value="c">Vlastní sázka…</option>
+        </select>
+      </label>
+      <div id="customWrap" class="f" hidden>
+        <input type="text" id="stakeCustom" maxlength="32" placeholder="Kdo prohraje, …" aria-label="Vlastní sázka">
+        <span class="count" id="customCount">0 / 32</span>
+      </div>
+      <label class="f">Vzkaz k výzvě <span class="dim" style="font-weight:500">(nepovinné)</span>
+        <input type="text" id="setupNote" maxlength="40" placeholder="Tentokrát tě nenechám vyhrát.">
+      </label>
+      <span class="count" id="setupCount">0 / 40</span>
+      <button class="btn wide" id="setupSubmit" type="submit">Založit hru</button>
+    </form>
+    <div id="recent" class="stack recent" hidden>
+      <h2 style="font-size:22px">Rozehrané na tomhle telefonu</h2>
+      <div id="recentList" class="stack" style="gap:8px"></div>
+    </div>
+    <details class="rules" data-rules></details>
+  </section>
+
+  <!-- ---------- info (loading / errors) ---------- -->
+  <section id="info" class="narrow stack" hidden style="padding-top:40px">
+    <h2 id="infoTitle">Otevírám hru…</h2>
+    <p id="infoMeta" class="dim"></p>
+    <div class="row">
+      <button class="btn" id="infoRetry" type="button">Zkusit znovu</button>
+      <button class="btn ghost" id="infoNew" type="button">Založit novou hru</button>
+    </div>
+  </section>
+
+  <!-- ---------- intro: accepting the challenge ---------- -->
+  <section id="intro" class="narrow stack-lg" hidden>
+    <div class="sack introsack" id="introSack">
+      <div class="sack-stripe"></div>
+      <div class="names"><span id="introHost"></span><i>zve ke stolu</i><span id="introGuest"></span></div>
+      <div class="cupsrow" id="introCups" aria-hidden="true"></div>
+      <div class="bet" id="introBetBox"><b>O co hrajeme</b><span id="introBet"></span></div>
+      <div class="sack-stripe"></div>
+    </div>
+    <div id="introNoteBox" hidden><div class="napkin"><small id="introNoteWho"></small><span id="introNote"></span></div></div>
+    <p class="lead" id="introLead"></p>
+    <div class="stack" style="gap:10px">
+      <button class="btn wide" id="acceptBtn" type="button">Přijmout výzvu</button>
+      <button class="btn ghost wide" id="introMine" type="button"></button>
+    </div>
+    <details class="rules" data-rules></details>
+  </section>
+
+  <!-- ---------- game ---------- -->
+  <section id="game" class="game" hidden>
+    <div class="table">
+      <div class="side" id="oppSide">
+        <span class="tag" id="oppTag"></span>
+        <div class="what"><b id="oppWhat"></b><span id="oppSub"></span></div>
+        <svg class="steam" id="oppSteam" viewBox="0 0 34 34" aria-hidden="true"><path d="M10 26c-3-4 3-6 0-11"/><path d="M17 26c-3-4 3-6 0-11"/><path d="M24 26c-3-4 3-6 0-11"/></svg>
+        <div class="slot empty" id="oppSlot"></div>
+      </div>
+      <div class="sack boardsack">
+        <div class="sack-label" id="sackTop"></div>
+        <div class="board" id="board" role="grid" aria-label="Stůl 4 × 4"></div>
+        <div class="foot"><span id="sackLeft"></span><span id="sackRight"></span></div>
+      </div>
+    </div>
+
+    <div class="result panel" id="endBox" hidden>
+      <h2 id="endTitle"></h2>
+      <p class="shared" id="endShared"></p>
+      <div class="ticket">
+        <span class="lbl" id="tLabel">Sázka</span>
+        <span class="res" id="tRes"></span>
+        <span class="ser" id="tSer"></span>
+        <div class="stamp" id="tStamp" hidden></div>
+      </div>
+      <div class="stack" style="gap:10px">
+        <button class="btn wide" id="endPrimary" type="button"></button>
+        <button class="btn ghost wide" id="endSecondary" type="button"></button>
+        <p class="small dim" id="endCaption"></p>
+      </div>
+    </div>
+
+    <div class="hand" id="hand">
+      <div class="slot empty" id="handSlot"></div>
+      <div>
+        <h3 id="handTitle"></h3>
+        <p class="desc" id="handDesc"></p>
+      </div>
+      <div class="act" id="handAct">
+        <div id="handNoteBox" hidden><div class="napkin"><small id="handNoteWho"></small><span id="handNote"></span></div></div>
+        <div class="row" id="placeRow" hidden>
+          <button class="btn" id="placeBtn" type="button"></button>
+          <button class="btn ghost" id="placeCancel" type="button">Jinam</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tray" id="tray" hidden>
+      <h3 id="trayTitle"></h3>
+      <div class="cups" id="trayCups"></div>
+      <p class="chosen" id="trayChosen" aria-live="polite"></p>
+      <label class="f">Napiš na ubrousek <span class="dim" style="font-weight:500">(nepovinné)</span>
+        <input type="text" id="napkinIn" maxlength="40" placeholder="Tenhle je s láskou.">
+      </label>
+      <span class="count" id="napkinCount">0 / 40</span>
+      <button class="btn wide" id="giveBtn" type="button" disabled></button>
+    </div>
+
+    <div class="wait panel" id="waitBox" hidden>
+      <p id="waitText" style="font-weight:700"></p>
+      <p id="waitMeta" class="dim small"></p>
+      <div class="row" id="claims" hidden>
+        <button class="btn ghost" id="claimX" type="button"></button>
+        <button class="btn ghost" id="claimO" type="button"></button>
+      </div>
+      <button class="btn ghost" id="waitCopy" type="button" hidden>Zkopírovat odkaz</button>
+    </div>
+    <p class="net" id="net" hidden></p>
+
+    <div class="pool" id="poolBox">
+      <p class="small dim" id="poolTitle"></p>
+      <div class="cups" id="poolCups" aria-hidden="true"></div>
+    </div>
+    <details class="rules" data-rules></details>
+  </section>
+
+  <!-- ---------- share ---------- -->
+  <section id="share" class="narrow stack-lg" hidden>
+    <div class="hero">
+      <h1 id="shareTitle">Stůl je prostřený.</h1>
+      <p class="lead" id="shareLead"></p>
+    </div>
+    <label class="f">Zpráva do chatu<textarea id="msg"></textarea></label>
+    <div class="stack" style="gap:10px">
+      <button class="btn wide" id="copyBtn" type="button">Zkopírovat zprávu</button>
+      <button class="btn ghost wide" id="copyLinkBtn" type="button">Zkopírovat jen odkaz</button>
+      <button class="btn ghost wide" id="backBtn" type="button">Ke stolu</button>
+    </div>
+  </section>
+</main>
+
+<div class="handover" id="handover" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="hoWho">
+  <p class="who" id="hoWho"></p>
+  <div class="big" id="hoCup"></div>
+  <p class="desc" id="hoDesc"></p>
+  <div class="napkin" id="hoNapkin" hidden></div>
+  <p class="tap">Klepni kamkoli</p>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  // ---------- sázky (stejné jako v Psaníčku) ----------
+  const STAKES = {
+    "1": { text: "Kdo prohraje, platí kafe.", short: "o kafe", third: (w, l) => `${l} platí kafe.`, win: (w, l) => `${l} platí kafe.`, lose: () => "Kafe platíš ty.", stamp: "Kafe platí soupeř" },
+    "2": { text: "Vítěz vybírá místo na rande.", short: "o místo na rande", third: w => `${w} vybírá místo na rande.`, win: () => "Místo na rande vybíráš ty.", lose: w => `${w} vybírá místo na rande.`, stamp: "Místo je tvoje" },
+    "3": { text: "Kdo prohraje, zve na zmrzlinu.", short: "o zmrzlinu", third: (w, l) => `${l} zve na zmrzlinu.`, win: (w, l) => `${l} tě zve na zmrzlinu.`, lose: () => "Na zmrzlinu zveš ty.", stamp: "Dva kopečky" },
+    "4": { text: "Vítěz vybírá film na večer.", short: "o film", third: w => `${w} vybírá film na večer.`, win: () => "Film na večer vybíráš ty.", lose: w => `${w} vybírá film na večer.`, stamp: "Film je tvůj" },
+    "5": { text: "Kdo prohraje, pravdivě odpoví na jednu otázku.", short: "o otázku", third: (w, l) => `${l} pravdivě odpoví na jednu otázku.`, win: (w, l) => `${l} ti pravdivě odpoví na jednu otázku.`, lose: () => "Odpovídáš na jednu otázku. Pravdivě.", stamp: "Ptej se" },
+    "6": { text: "Jen o čest.", short: "o čest", third: w => `Čest patří: ${w}.`, win: () => "Čest je tvoje.", lose: w => `Čest patří: ${w}.`, stamp: "Čest" },
+  };
+  function stake(s) {
+    if (STAKES[s.k]) return STAKES[s.k];
+    if (s.k === "c" && s.kc) {
+      const t = s.kc;
+      return { text: t, short: "o sázku", third: w => `${w} vyhrává sázku: ${t}`, win: () => `Vyhráváš sázku: ${t}`, lose: w => `${w} vyhrává sázku: ${t}`, stamp: "Sázka platí" };
+    }
+    return null;
+  }
+
+  // ---------- hrnky: 4 bity = 4 vlastnosti ----------
+  // bit 1 velký, 2 espresso, 4 hranatý, 8 s pěnou
+  const ATTR = [
+    { on: "velký", off: "malý", allOn: "Všechny čtyři hrnky jsou velké.", allOff: "Všechny čtyři hrnky jsou malé." },
+    { on: "espresso", off: "latte", allOn: "Ve všech čtyřech je espresso.", allOff: "Ve všech čtyřech je latte." },
+    { on: "hranatý", off: "kulatý", allOn: "Všechny čtyři jsou hranaté.", allOff: "Všechny čtyři jsou kulaté." },
+    { on: "s pěnou", off: "bez pěny", allOn: "Všechny čtyři mají pěnu.", allOff: "Ani jeden nemá pěnu." },
+  ];
+  const cupName = id => ATTR.map((a, b) => id >> b & 1 ? a.on : a.off).join(", ");
+  const cupLong = id => cupName(id).replace(/^(\S+), (\S+)/, "$1 hrnek, $2");
+  const cap = t => t.charAt(0).toLocaleUpperCase("cs") + t.slice(1);
+
+  function cupSVG(id) {
+    const big = id & 1, dark = id & 2, sq = id & 4, foam = id & 8;
+    const cx = 45, cy = 50, R = big ? 37 : 25, rim = big ? 6 : 4.5, r = R - rim;
+    const liquid = dark ? "var(--espresso)" : "var(--latte)";
+    const shape = (rad, attrs) => sq
+      ? `<rect x="${cx - rad}" y="${cy - rad}" width="${2 * rad}" height="${2 * rad}" rx="${rad * .3}" ${attrs}/>`
+      : `<circle cx="${cx}" cy="${cy}" r="${rad}" ${attrs}/>`;
+    const hw = big ? 17 : 13, hh = big ? 15 : 12, hx = cx + R - 4;
+    let s = `<svg class="cup" viewBox="0 0 100 100" aria-hidden="true">`;
+    s += `<rect x="${hx}" y="${cy - hh / 2}" width="${hw}" height="${hh}" rx="${hh / 2}" fill="none" stroke="var(--porcelain)" stroke-width="${big ? 5.5 : 4.5}"/>`;
+    s += shape(R, `fill="var(--porcelain)"`);
+    s += shape(r, `fill="${liquid}"`);
+    s += shape(r - .8, `fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1.6"`);
+    if (foam) {
+      const f = r * .52;
+      s += `<g fill="var(--foam)"><circle cx="${cx}" cy="${cy}" r="${f}"/><circle cx="${cx - f * .55}" cy="${cy - f * .4}" r="${f * .62}"/><circle cx="${cx + f * .5}" cy="${cy + f * .45}" r="${f * .6}"/><circle cx="${cx + f * .5}" cy="${cy - f * .45}" r="${f * .52}"/><circle cx="${cx - f * .5}" cy="${cy + f * .5}" r="${f * .5}"/></g>`;
+      s += `<path d="M0 3C-4.2 0-3.2-4.4 0-2C3.2-4.4 4.2 0 0 3Z" transform="translate(${cx} ${cy}) scale(${f / 6.5})" fill="${liquid}" opacity=".8"/>`;
+      s += `<circle cx="${cx + r * .7}" cy="${cy + r * .05}" r="${r * .06}" fill="var(--foam)"/><circle cx="${cx - r * .2}" cy="${cy - r * .78}" r="${r * .045}" fill="var(--foam)"/>`;
+    } else {
+      s += `<path d="M${cx - r * .62} ${cy - r * .2}A${r * .66} ${r * .66} 0 0 1 ${cx - r * .1} ${cy - r * .64}" fill="none" stroke="rgba(255,255,255,.34)" stroke-width="${big ? 3 : 2.2}" stroke-linecap="round"/>`;
+    }
+    return s + `</svg>`;
+  }
+  const cupBox = id => `<div class="cupbox">${cupSVG(id)}</div>`;
+
+  // ---------- sdílená hra: jeden odkaz na celou sérii ----------
+  // Odkaz je #r.<id>. Hra žije na mantledb.sh (bez účtu, CORS) jako JSON {app, g, v, sx, so, u}:
+  // g = stav hry (níže), v = počítadlo zápisů (každý zapisující nejdřív znovu načte a porovná),
+  // sx / so = token zařízení, které drží místo ("" = volné), u = čas zápisu.
+  // g = {x, o, s, q, p, t, k, kc, c, n, w}: jména, kdo podává první hrnek, q = podané hrnky v pořadí,
+  // p = místa, kam se položily (p[i] nese hrnek q[i]), t = minuta posledního tahu, k/kc = sázka,
+  // c = vzkaz k výzvě, n = {i, text} vzkaz na ubrousku k podanému hrnku q[i], w = výhry [x, o].
+  const API = "https://mantledb.sh/v2/";
+  const docUrl = id => `${API}kaficka-${id}/hra`;
+  const BASE_URL = location.origin + location.pathname;
+  const linkFor = () => BASE_URL + "#r." + room.id;
+  async function req(url, opt = {}) {
+    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 10000);
+    try { return await fetch(url, { ...opt, cache: "no-store", signal: ac.signal }); } finally { clearTimeout(timer); }
+  }
+  async function loadDoc(id) {
+    const r = await req(docUrl(id));
+    if (r.status === 404) return null;
+    if (!r.ok) throw new Error("load " + r.status);
+    return r.json();
+  }
+  async function saveDoc(id, d) {
+    const r = await req(docUrl(id), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...d, u: Date.now() }) });
+    if (!r.ok) throw new Error("save " + r.status);
+  }
+  const attempt = (f, fallback) => { try { return f(); } catch { return fallback; } };
+  const store = { get: k => attempt(() => localStorage.getItem(k), null), set: (k, v) => attempt(() => localStorage.setItem(k, v)) };
+  const randId = n => [...crypto.getRandomValues(new Uint8Array(n))].map(b => (b % 36).toString(36)).join("");
+  const device = store.get("kaf-dev") || randId(16);
+  store.set("kaf-dev", device);
+
+  const str = (v, n) => typeof v === "string" ? v.trim().slice(0, n) : "";
+  function decode(g) {
+    if (!g || typeof g !== "object") return null;
+    const x = str(g.x, 16), o = str(g.o, 16);
+    if (!x || !o || (g.s !== "x" && g.s !== "o")) return null;
+    const ints = a => Array.isArray(a) && a.every(i => Number.isInteger(i) && i >= 0 && i < 16) && new Set(a).size === a.length;
+    if (!ints(g.q) || !ints(g.p) || g.q.length > 16 || !(g.p.length === g.q.length || g.p.length === g.q.length - 1)) return null;
+    const w = Array.isArray(g.w) && g.w.length === 2 ? g.w.map(n => Number.isInteger(n) && n >= 0 ? Math.min(n, 999) : 0) : [0, 0];
+    const k = /^[1-6c]$/.test(g.k || "") ? g.k : "", kc = str(g.kc, 32);
+    const n = g.n && Number.isInteger(g.n.i) && str(g.n.text, 40) ? { i: g.n.i, text: str(g.n.text, 40) } : null;
+    return { x, o, s: g.s, q: [...g.q], p: [...g.p], t: Number.isFinite(g.t) ? g.t : null, k: k === "c" && !kc ? "" : k, kc, c: str(g.c, 40), n, w };
+  }
+  const clone = s => ({ ...s, q: [...s.q], p: [...s.p], w: [...s.w], n: s.n ? { ...s.n } : null });
+
+  // ---------- pravidla ----------
+  const other = p => p === "x" ? "o" : "x";
+  const nameOf = (s, p) => p === "x" ? s.x : s.o;
+  const picker = (s, i) => i % 2 === 0 ? s.s : other(s.s);   // kdo podal hrnek q[i]; položí ho ten druhý
+  const LINES = [];
+  for (let r = 0; r < 4; r++) LINES.push([0, 1, 2, 3].map(c => r * 4 + c));
+  for (let c = 0; c < 4; c++) LINES.push([0, 1, 2, 3].map(r => r * 4 + c));
+  LINES.push([0, 5, 10, 15], [3, 6, 9, 12]);
+  function grid(s) { const g = new Array(16).fill(null); s.p.forEach((cell, i) => g[cell] = s.q[i]); return g; }
+  function winner(s) {
+    if (!s.p.length) return null;
+    const g = grid(s), last = s.p[s.p.length - 1];
+    for (const line of LINES) {
+      if (!line.includes(last) || line.some(c => g[c] === null)) continue;
+      let on = 15, off = 15;
+      line.forEach(c => { on &= g[c]; off &= ~g[c] & 15; });
+      if (on || off) return { p: other(picker(s, s.p.length - 1)), cells: line, on, off };
+    }
+    return null;
+  }
+  const ended = s => !!winner(s) || s.p.length === 16;
+  function phase(s) {
+    if (ended(s)) return { kind: "end" };
+    if (s.p.length < s.q.length) return { kind: "place", who: other(picker(s, s.q.length - 1)), cup: s.q[s.q.length - 1] };
+    return { kind: "pick", who: picker(s, s.q.length) };
+  }
+  const left = s => [...Array(16).keys()].filter(id => !s.q.includes(id));
+  function sharedText(win) {
+    const parts = [];
+    ATTR.forEach((a, b) => { if (win.on >> b & 1) parts.push(a.allOn); if (win.off >> b & 1) parts.push(a.allOff); });
+    return parts.join(" ");
+  }
+  function seriesAfter(s) { const w = [...s.w], win = winner(s); if (win) w[win.p === "x" ? 0 : 1]++; return w; }
+
+  // ---------- stav ----------
+  let st = null, room = null, me = null, view = "setup", busy = false, net = "", bootSeq = 0;
+  let pendingCell = null, pendingCup = null, shareKind = "new";
+  let animating = false;
+  const turn = () => st ? phase(st) : null;
+  const freeSeat = () => !room ? null : !room.sx ? "x" : !room.so ? "o" : null;
+  const canAct = () => !!st && !!room && !!me && !busy && !animating && turn().kind !== "end" && turn().who === me;
+  const opp = () => me ? other(me) : null;
+  const buzz = () => { try { navigator.vibrate && navigator.vibrate(12); } catch {} };
+  function ago(t) {
+    if (!t) return "";
+    const min = Math.max(0, Math.round(Date.now() / 60000 - t));
+    if (min < 1) return "před chvílí";
+    if (min < 60) return `před ${min} min`;
+    const h = Math.floor(min / 60);
+    if (h < 48) return `před ${h} h`;
+    return `před ${Math.round(h / 24)} dny`;
+  }
+  const gameNo = s => s.w[0] + s.w[1] + 1;
+  const COLS = "ABCD";
+  const coord = i => COLS[i % 4] + (Math.floor(i / 4) + 1);
+
+  // ---------- pravidla do nápovědy ----------
+  const rulesHTML = `<summary>Jak se hraje</summary><div class="body">
+    <ol>
+      <li>Na stole je 16 míst (4 × 4) a 16 hrnků. Každý je jiný ve čtyřech vlastnostech: velký nebo malý, espresso (tmavé) nebo latte (světlé), kulatý nebo hranatý, s pěnou nebo bez pěny.</li>
+      <li>Hrnek si nevybíráš. Soupeř ti ho podá, ty ho položíš na volné místo a pak ze zbylých vybereš hrnek pro něj.</li>
+      <li>Vyhrává, kdo položí čtvrtý hrnek do řady, sloupce nebo úhlopříčky, kde mají všechny čtyři aspoň jednu vlastnost společnou. Je jedno, kdo položil ty předchozí.</li>
+      <li>Když dojdou hrnky a nikdo čtveřici nesložil, je to remíza.</li>
+      <li>Co položíš, to platí. Podaný hrnek se nevrací.</li>
+    </ol>
+    <div class="legend">${[[1, "velký", 0, "malý"], [3, "espresso", 1, "latte"], [5, "hranatý", 1, "kulatý"], [9, "s pěnou", 1, "bez pěny"]].map(([a, on, b, off]) =>
+      `<div>${cupBox(a)}<span>${on}</span></div><div>${cupBox(b)}<span>${off}</span></div>`).join("")}</div>
+    <p class="small dim">Je to desková hra Quarto (Blaise Muller, 1991) s hrnky místo figurek. Pravidla podle <a href="https://en.wikipedia.org/wiki/Quarto_(board_game)" target="_blank" rel="noopener">Wikipedie</a>; varianta se čtvercem 2 × 2 se nehraje.</p>
+  </div>`;
+  document.querySelectorAll("[data-rules]").forEach(d => d.innerHTML = rulesHTML);
+
+  // ---------- pohledy ----------
+  function setView(v) {
+    view = v;
+    for (const id of ["setup", "info", "intro", "game", "share"]) $(id).hidden = id !== (v === "play" || v === "end" ? "game" : v);
+    $("newGameBtn").hidden = v === "setup";
+    render();
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }
+  const show = v => view === v ? render() : setView(v);
+
+  function render() {
+    const inGame = !!st && !!room && (view === "play" || view === "end" || view === "share");
+    $("topMeta").textContent = st && (view === "play" || view === "end" || view === "intro") ? topMeta() : "";
+    $("copyTopBtn").hidden = !inGame || view === "share";
+    document.title = canAct() ? "Jsi na tahu · Kafíčka" : "Kafíčka";
+    if (view === "setup") renderSetup();
+    if (view === "intro") renderIntro();
+    if (view === "play" || view === "end") renderGame();
+    if (view === "share") renderShare();
+  }
+  function topMeta() {
+    const s = stake(st), parts = [];
+    if (s) parts.push(s.short);
+    parts.push(`${st.x} ${st.w[0]} : ${st.w[1]} ${st.o}`);
+    return parts.join(" · ");
+  }
+
+  function renderSetup() {
+    $("setupSubmit").disabled = busy;
+    $("setupSubmit").textContent = busy ? "Prostírám stůl…" : "Založit hru";
+    $("starterO").textContent = $("nameO").value.trim() || "Soupeř";
+    const list = recentRooms(), box = $("recentList");
+    $("recent").hidden = !list.length;
+    box.textContent = "";
+    list.forEach(r => {
+      const a = document.createElement("a"); a.className = "btn ghost wide"; a.href = "#r." + r.id;
+      a.textContent = `${r.x} × ${r.o}`;
+      const sp = document.createElement("span"); sp.textContent = r.me ? `hraješ jako ${r.me === "x" ? r.x : r.o}` : "přihlížíš";
+      a.append(sp); box.append(a);
+    });
+  }
+
+  function renderIntro() {
+    const seat = freeSeat() || "o", host = other(seat);
+    $("introHost").textContent = nameOf(st, host);
+    $("introGuest").textContent = nameOf(st, seat);
+    $("introCups").innerHTML = [9, 6, 15, 0].map(cupBox).join("");
+    const s = stake(st);
+    $("introBetBox").hidden = !s;
+    if (s) $("introBet").textContent = s.text;
+    $("introNoteBox").hidden = !st.c;
+    if (st.c) { $("introNoteWho").textContent = `Na ubrousku od: ${nameOf(st, host)}`; $("introNote").textContent = st.c; }
+    const first = st.s === seat;
+    $("introLead").textContent = (first
+      ? "První hrnek podáváš ty. "
+      : `${nameOf(st, host)} ti podá první hrnek. `) + "Hrajete oba na tomhle odkazu, tah soupeře se tu objeví sám.";
+    $("introMine").textContent = `Tohle je moje hra, jsem ${nameOf(st, host)}`;
+    $("acceptBtn").disabled = busy;
+    $("acceptBtn").textContent = busy ? "Sedám si…" : "Přijmout výzvu";
+  }
+
+  function renderGame() {
+    const ph = turn(), isEnd = ph.kind === "end", win = winner(st), mine = canAct();
+    const g = grid(st);
+    // sack labels: jména, hra, sázka
+    $("sackTop").textContent = `Kafíčka · ${st.x} × ${st.o}`;
+    $("sackLeft").textContent = `Hra č. ${gameNo(st)}`;
+    $("sackRight").textContent = `${st.p.length} / 16 hrnků`;
+
+    // board
+    const board = $("board");
+    board.textContent = "";
+    const winCells = win ? win.cells : [];
+    const last = st.p.length ? st.p[st.p.length - 1] : -1;
+    const placing = mine && ph.kind === "place";
+    for (let i = 0; i < 16; i++) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cell"; b.dataset.i = i;
+      const id = g[i];
+      if (id !== null) {
+        b.classList.add("full"); b.innerHTML = cupBox(id);
+        b.setAttribute("aria-label", `${coord(i)}: ${cupLong(id)}`);
+        if (i === last && !win) b.classList.add("last");
+        if (winCells.includes(i)) { b.classList.add("win"); b.style.setProperty("--d", winCells.indexOf(i) * 90 + "ms"); }
+        else if (win) b.classList.add("dimmed");
+      } else if (placing && pendingCell === i) {
+        b.classList.add("ghost"); b.innerHTML = cupBox(ph.cup);
+        b.setAttribute("aria-label", `${coord(i)}: sem položíš hrnek, klepni znovu pro potvrzení`);
+      } else {
+        b.innerHTML = `<span class="coord">${coord(i)}</span>`;
+        b.setAttribute("aria-label", `${coord(i)}: volné místo`);
+      }
+      if (!placing || id !== null) b.setAttribute("aria-disabled", "true");
+      board.append(b);
+    }
+    board.classList.toggle("locked", !placing);
+
+    renderSides(ph);
+    $("endBox").hidden = !isEnd;
+    if (isEnd) renderEnd(win);
+    $("net").textContent = net; $("net").hidden = !net;
+
+    // pool of cups still to come (who wants to plan)
+    const rest = left(st);
+    $("poolBox").hidden = isEnd || !rest.length || (mine && ph.kind === "pick");
+    $("poolTitle").textContent = `Ještě nepodané hrnky (${rest.length})`;
+    $("poolCups").innerHTML = rest.map(id => `<div class="pick">${cupSVG(id)}</div>`).join("");
+  }
+
+  function renderSides(ph) {
+    const isEnd = ph.kind === "end", mine = canAct(), o = opp();
+    const steam = $("oppSteam"), oppSlot = $("oppSlot");
+    steam.toggleAttribute("hidden", true); oppSlot.hidden = true; oppSlot.className = "slot empty"; oppSlot.innerHTML = "";
+    $("oppSide").classList.remove("on");
+    // top strip: the other side of the table
+    if (!me) {
+      $("oppTag").textContent = `${st.x} × ${st.o}`;
+      $("oppWhat").textContent = isEnd ? "Dohráno." : `${nameOf(st, ph.who)} ${ph.kind === "place" ? "pokládá hrnek" : "vybírá hrnek"}.`;
+      $("oppSub").textContent = "Přihlížíš, hrají jen dva.";
+      if (ph.kind === "place") { oppSlot.hidden = false; oppSlot.className = "slot"; oppSlot.innerHTML = cupBox(ph.cup); }
+    } else {
+      $("oppTag").textContent = nameOf(st, o);
+      const seatFree = freeSeat() === o;
+      if (isEnd) { $("oppWhat").textContent = "Dohráno."; $("oppSub").textContent = ""; }
+      else if (seatFree) { $("oppWhat").textContent = "Ještě nesedí u stolu."; $("oppSub").textContent = "Odkaz zatím nikdo neotevřel."; }
+      else if (ph.who === o && ph.kind === "pick") {
+        $("oppSide").classList.add("on"); steam.toggleAttribute("hidden", false);
+        $("oppWhat").textContent = "Vybírá hrnek pro tebe…"; $("oppSub").textContent = "objeví se tu sám";
+      } else if (ph.who === o && ph.kind === "place") {
+        $("oppSide").classList.add("on");
+        oppSlot.hidden = false; oppSlot.className = "slot"; oppSlot.innerHTML = cupBox(ph.cup);
+        $("oppWhat").textContent = "Pokládá hrnek od tebe."; $("oppSub").textContent = st.t ? `podáno ${ago(st.t)}` : "";
+      } else {
+        $("oppWhat").textContent = "Čeká na tebe."; $("oppSub").textContent = "";
+      }
+    }
+
+    // bottom: your hand
+    const hand = $("hand"), slot = $("handSlot");
+    hand.hidden = !me || isEnd;
+    $("tray").hidden = true; $("placeRow").hidden = true; $("handNoteBox").hidden = true;
+    hand.classList.remove("on");
+    slot.className = "slot empty"; slot.innerHTML = "";
+    if (me && !isEnd) {
+      const name = nameOf(st, o);
+      if (ph.who === me && ph.kind === "place") {
+        hand.classList.add("on");
+        slot.className = "slot"; slot.innerHTML = cupBox(ph.cup);
+        $("handTitle").textContent = `${name} ti podává hrnek.`;
+        $("handDesc").textContent = `${cap(cupLong(ph.cup))}. ` + (pendingCell === null ? "Klepni na volné místo na stole." : `Položit na ${coord(pendingCell)}?`);
+        const n = st.n && st.n.i === st.q.length - 1 ? st.n.text : "";
+        $("handNoteBox").hidden = !n;
+        if (n) { $("handNoteWho").textContent = `Na ubrousku od: ${name}`; $("handNote").textContent = n; }
+        $("placeRow").hidden = pendingCell === null;
+        if (pendingCell !== null) $("placeBtn").textContent = busy ? "Pokládám…" : `Položit na ${coord(pendingCell)}`;
+        $("placeBtn").disabled = busy || !mine;
+      } else if (ph.who === me && ph.kind === "pick") {
+        hand.classList.add("on");
+        $("handTitle").textContent = st.q.length === 0 ? "Začínáš ty." : "Hrnek je na stole.";
+        $("handDesc").textContent = `Teď vyber, který hrnek podáš: ${name}.`;
+        renderTray(name);
+      } else if (ph.kind === "place") {
+        $("handTitle").textContent = "Hrnek je podaný.";
+        $("handDesc").textContent = `${name} ho teď pokládá. Až vybere hrnek pro tebe, přijede sem.`;
+        const n = st.n && st.n.i === st.q.length - 1 ? st.n.text : "";
+        $("handNoteBox").hidden = !n;
+        if (n) { $("handNoteWho").textContent = "Tvůj ubrousek"; $("handNote").textContent = n; }
+      } else {
+        $("handTitle").textContent = freeSeat() === o ? "Čekáš na soupeře." : "Ruce volné.";
+        $("handDesc").textContent = freeSeat() === o
+          ? "Pošli odkaz do chatu. Jakmile ho soupeř otevře a přijme výzvu, uvidíš to tady."
+          : `${name} vybírá, který hrnek ti podá. Stránku můžeš zavřít, hra počká.`;
+      }
+    }
+
+    // spectators and the unopened link
+    const showWait = !isEnd && (!me || freeSeat() === o);
+    $("waitBox").hidden = !showWait;
+    if (showWait) {
+      $("claims").hidden = !!me; $("waitCopy").hidden = !me;
+      if (!me) {
+        $("waitText").textContent = "Přihlížíš.";
+        $("waitMeta").textContent = "Hraješ tuhle hru z jiného prohlížeče nebo telefonu? Pokračuj tady:";
+        $("claimX").textContent = `Jsem ${st.x}`; $("claimO").textContent = `Jsem ${st.o}`;
+      } else {
+        $("waitText").textContent = "Odkaz ještě nikdo neotevřel.";
+        $("waitMeta").textContent = "Stačí ho poslat jednou, tahy se na něm pak objevují samy.";
+      }
+    }
+  }
+
+  function renderTray(name) {
+    const tray = $("tray"), box = $("trayCups");
+    tray.hidden = false;
+    $("trayTitle").textContent = `Který hrnek podáš: ${name}?`;
+    const ids = left(st);
+    if (pendingCup !== null && !ids.includes(pendingCup)) pendingCup = null;
+    box.textContent = "";
+    ids.forEach(id => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "pick"; b.dataset.id = id;
+      b.innerHTML = cupSVG(id);
+      b.setAttribute("aria-label", cupLong(id));
+      b.setAttribute("aria-pressed", String(pendingCup === id));
+      box.append(b);
+    });
+    const ch = $("trayChosen");
+    ch.innerHTML = "";
+    if (pendingCup === null) ch.textContent = "Klepni na hrnek.";
+    else { const b = document.createElement("b"); b.textContent = cupLong(pendingCup); ch.append("Podáš: ", b); }
+    $("giveBtn").disabled = pendingCup === null || busy || !canAct();
+    $("giveBtn").textContent = busy ? "Podávám…" : `Podat hrnek: ${name}`;
+    $("napkinCount").textContent = `${$("napkinIn").value.length} / 40`;
+  }
+
+  function renderEnd(win) {
+    const youWon = !!win && win.p === me, s = stake(st), w = seriesAfter(st);
+    const W = win ? nameOf(st, win.p) : "", L = win ? nameOf(st, other(win.p)) : "";
+    if (!win) { $("endTitle").textContent = "Remíza. Hrnky došly."; $("endShared").textContent = "Na stole je všech 16 a žádná čtveřice."; }
+    else {
+      $("endTitle").textContent = youWon ? "Čtveřice! Vyhráváš." : `${W} skládá čtveřici.`;
+      $("endShared").textContent = sharedText(win);
+    }
+    $("tLabel").textContent = s ? "Sázka" : "Výsledek";
+    $("tRes").textContent = !win ? (s ? "Sázka se přesouvá do odvety." : "Nikdo nevyhrál.")
+      : !me ? (s ? s.third(W, L) : `Vyhrává ${W}.`)
+      : s ? (youWon ? s.win(W, L) : s.lose(W, L)) : (youWon ? "Bez sázky, jen pro radost." : `Vyhrává ${W}.`);
+    $("tSer").textContent = `série: ${st.x} ${w[0]} : ${w[1]} ${st.o} · hra č. ${gameNo(st)}`;
+    const stampOn = !!(youWon && s);
+    $("tStamp").hidden = !stampOn;
+    $("tStamp").parentElement.classList.toggle("stamped", stampOn);
+    if (stampOn) $("tStamp").textContent = s.stamp;
+    const loser = win ? L : nameOf(st, other(st.s));
+    $("endPrimary").hidden = !me;
+    $("endPrimary").disabled = busy;
+    $("endCaption").textContent = "";
+    if (!me) $("endSecondary").textContent = "Zkopírovat odkaz na hru";
+    else if (!win) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Zkopírovat odkaz na hru"; }
+    else if (youWon) { $("endPrimary").textContent = `Odveta (první hrnek podává ${loser})`; $("endSecondary").textContent = "Zkopírovat odkaz na hru"; }
+    else {
+      $("endPrimary").textContent = "Chci odvetu"; $("endSecondary").textContent = "Uznat porážku";
+      $("endCaption").textContent = `zkopíruje zprávu: „${concedeText()}“`;
+    }
+  }
+  function concedeText() {
+    const win = winner(st), s = stake(st);
+    const W = nameOf(st, win.p), L = nameOf(st, other(win.p));
+    return `Uznávám porážku v Kafíčkách. ${s ? s.third(W, L) + " " : ""}Kdy a kde?`;
+  }
+
+  function message() {
+    const link = linkFor(), s = stake(st), mine = nameOf(st, me || "x");
+    const first = st.s === (me || "x") ? "Hrnek si nevybíráš, podám ti ho já." : "Hrnek si nevybíráš, podává ho soupeř. Začínáš ty.";
+    return `${mine} tě zve na Kafíčka.${s ? " O co hrajeme: " + s.text : ""} ${first} Kdo položí čtvrtý hrnek do řady, kde mají všechny něco společného, vyhrává. Hrajeme oba na tomhle odkazu: ${link}`;
+  }
+  function renderShare() {
+    const s = stake(st), them = nameOf(st, other(me || "x"));
+    $("shareTitle").textContent = shareKind === "new" ? "Stůl je prostřený." : "Odkaz na hru";
+    $("shareLead").textContent = `Pošli zprávu do chatu: ${them}. Odkaz posíláš jen jednou, tahy se pak na něm objevují samy.` + (s ? ` Sázka: ${s.text}` : "");
+    const link = linkFor(), msg = $("msg");
+    if (msg.dataset.link !== link) { msg.value = message(); msg.dataset.link = link; }
+  }
+
+  // ---------- animace ----------
+  // Hrnek letí jako samostatný prvek z jednoho obdélníku do druhého (FLIP přes Web Animations).
+  async function fly(id, from, toEl, opt = {}) {
+    if (calm() || !from || !toEl) return;
+    const to = toEl.getBoundingClientRect();
+    if (!to.width) return;
+    const f = document.createElement("div");
+    f.className = "flycup"; f.innerHTML = cupSVG(id);
+    Object.assign(f.style, { left: to.left + "px", top: to.top + "px", width: to.width + "px", height: to.height + "px" });
+    document.body.append(f);
+    toEl.style.visibility = "hidden";
+    const dx = from.left + from.width / 2 - (to.left + to.width / 2), dy = from.top + from.height / 2 - (to.top + to.height / 2);
+    const sc = from.width / to.width, rot = opt.rot || 0;
+    const a = f.animate([
+      { transform: `translate(${dx}px, ${dy}px) scale(${sc}) rotate(${rot}deg)`, opacity: opt.fadeIn ? 0 : 1 },
+      { transform: `translate(${dx * .25}px, ${dy * .25 - (opt.lift || 0)}px) scale(${1 + (sc - 1) * .25 + (opt.lift ? .12 : 0)}) rotate(${rot * .2}deg)`, opacity: 1, offset: .62 },
+      { transform: "none", opacity: 1 },
+    ], { duration: opt.ms || 620, easing: "cubic-bezier(.16, 1, .3, 1)" });
+    await a.finished.catch(() => {});
+    toEl.style.visibility = "";
+    f.remove();
+  }
+  // podání odchází od mě ke soupeři: hrnek odjede přes stůl nahoru a zmizí
+  async function flyAway(id, fromEl, toEl) {
+    if (calm() || !fromEl || !toEl) return;
+    const from = fromEl.getBoundingClientRect(), to = toEl.getBoundingClientRect();
+    const f = document.createElement("div");
+    f.className = "flycup"; f.innerHTML = cupSVG(id);
+    Object.assign(f.style, { left: from.left + "px", top: from.top + "px", width: from.width + "px", height: from.height + "px" });
+    document.body.append(f);
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2), dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const a = f.animate([
+      { transform: "none", opacity: 1 },
+      { transform: `translate(${dx * .4}px, ${dy * .4}px) scale(1.5) rotate(-6deg)`, opacity: 1, offset: .4 },
+      { transform: `translate(${dx}px, ${dy}px) scale(${to.width / from.width * .9}) rotate(4deg)`, opacity: .9 },
+    ], { duration: 820, easing: "cubic-bezier(.45, 0, .2, 1)" });
+    await a.finished.catch(() => {});
+    f.remove();
+  }
+  const cellEl = i => $("board").querySelector(`.cell[data-i="${i}"] .cupbox`);
+
+  // Hlavní scéna: soupeř ti podává hrnek. Přijede shora přes stůl, ukáže ubrousek a usadí se do ruky.
+  let hoDone = null;
+  function handover(id, fromName, note) {
+    return new Promise(resolve => {
+      const ov = $("handover");
+      $("hoWho").innerHTML = "";
+      const sp = document.createElement("span"); sp.textContent = "ti podává hrnek";
+      $("hoWho").append(fromName, sp);
+      $("hoCup").innerHTML = cupSVG(id);
+      $("hoDesc").textContent = cap(cupLong(id));
+      const nap = $("hoNapkin");
+      nap.hidden = !note; nap.textContent = note || "";
+      ov.hidden = false; ov.focus();
+      const reduce = calm();
+      const anims = [];
+      if (reduce) anims.push(ov.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 200, fill: "both" }));
+      else {
+        anims.push(ov.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, fill: "both" }));
+        anims.push($("hoWho").animate([{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 120, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" }));
+        anims.push($("hoCup").animate([
+          { transform: "translateY(-62vh) scale(.5) rotate(-24deg)", opacity: .9 },
+          { transform: "translateY(10px) scale(1.04) rotate(3deg)", opacity: 1, offset: .72 },
+          { transform: "none" },
+        ], { duration: 980, delay: 160, easing: "cubic-bezier(.22, 1, .36, 1)", fill: "both" }));
+        anims.push($("hoDesc").animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 900, fill: "both" }));
+        if (note) anims.push(nap.animate([
+          { opacity: 0, transform: "translateY(30px) rotate(-14deg) scale(.9)" },
+          { opacity: 1, transform: "rotate(-2deg)" },
+        ], { duration: 560, delay: 1050, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" }));
+      }
+      buzz();
+      let closed = false;
+      const close = async () => {
+        if (closed) return; closed = true;
+        clearTimeout(timer); ov.removeEventListener("click", close); hoDone = null;
+        const from = $("hoCup").getBoundingClientRect();
+        if (!reduce) { const fade = ov.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 320, fill: "forwards" }); fly(id, from, $("handSlot").querySelector(".cupbox"), { ms: 700 }); await fade.finished.catch(() => {}); }
+        anims.forEach(a => a.cancel());
+        ov.hidden = true;
+        resolve();
+      };
+      hoDone = close;
+      ov.addEventListener("click", close);
+      const timer = setTimeout(close, note ? 4200 : 2600);
+    });
+  }
+  document.addEventListener("keydown", e => { if (hoDone && (e.key === "Escape" || e.key === "Enter" || e.key === " ")) { e.preventDefault(); hoDone(); } });
+
+  // Scéna podání se přehraje jednou na každý podaný hrnek (i když se odkaz otevře až za hodinu).
+  async function maybeHandover() {
+    const ph = turn();
+    if (!me || ph.kind !== "place" || ph.who !== me) return;
+    const key = "kaf-seen-" + room.id, mark = `${gameNo(st)}-${st.q.length}`;
+    if (store.get(key) === mark) return;
+    store.set(key, mark);
+    const n = st.n && st.n.i === st.q.length - 1 ? st.n.text : "";
+    await handover(ph.cup, nameOf(st, opp()), n);
+  }
+
+  // Co se změnilo od posledního pohledu → přehrát jako scénu (soupeřovo položení, pak podání).
+  async function playChanges(prev) {
+    const s = st;
+    const placed = s.p.length === prev.p.length + 1 && s.p.length <= s.q.length;
+    const handed = s.q.length === prev.q.length + 1;
+    animating = true;
+    try {
+      if (placed && !calm()) {
+        const cell = s.p[s.p.length - 1];
+        await fly(s.q[s.p.length - 1], $("oppSide").getBoundingClientRect(), cellEl(cell), { rot: -10, lift: 20, ms: 700 });
+      }
+      if (ended(s)) { popWin(); return; }
+      if (handed) await maybeHandover();
+    } finally { animating = false; render(); }
+  }
+  function popWin() {
+    if (calm()) return;
+    $("board").querySelectorAll(".cell.win").forEach(c => c.classList.add("pop"));
+    const stamp = $("tStamp");
+    if (!stamp.hidden) { stamp.classList.remove("in"); void stamp.offsetWidth; stamp.classList.add("in"); }
+  }
+
+  // ---------- zápis do místnosti ----------
+  async function commit(next, ok, conflictText) {
+    busy = true; pollSeq++; render();
+    let d;
+    try { d = await loadDoc(room.id); }
+    catch { busy = false; toast("Spojení nevyšlo, zkus to znovu."); render(); return false; }
+    const cur = d && decode(d.g);
+    if (!d || !cur || d.v !== room.v || !ok(cur)) {
+      busy = false; pendingCell = null;
+      toast(conflictText || "Mezitím se hra změnila, tah se nezapsal.");
+      if (d) apply(d, true); else render();
+      return false;
+    }
+    try { await saveDoc(room.id, { ...d, g: next, v: d.v + 1 }); }
+    catch { busy = false; toast("Tah se nepodařilo odeslat, zkus to znovu."); render(); return false; }
+    room.v = d.v + 1; room.sx = d.sx || ""; room.so = d.so || "";
+    st = next; busy = false; lastChange = Date.now();
+    return true;
+  }
+
+  function apply(d, force) {
+    if (!room || !d) return;
+    const seats = room.sx + "|" + room.so;
+    room.sx = d.sx || ""; room.so = d.so || "";
+    const s = decode(d.g);
+    if (!s || (d.v === room.v && !force)) { if (seats !== room.sx + "|" + room.so && (view === "play" || view === "intro")) render(); return; }
+    const prev = st;
+    room.v = d.v; st = s; lastChange = Date.now();
+    const sameGame = prev && s.x === prev.x && s.o === prev.o && s.s === prev.s && s.w[0] === prev.w[0] && s.w[1] === prev.w[1]
+      && prev.q.every((id, i) => s.q[i] === id) && prev.p.every((c, i) => s.p[i] === c);
+    if (pendingCell !== null && (grid(st)[pendingCell] !== null || !canAct() || turn().kind !== "place")) pendingCell = null;
+    if (view === "intro") { if (!freeSeat()) show(ended(st) ? "end" : "play"); else render(); return; }
+    if (view === "share" || view === "info" || view === "setup") return;
+    remember();
+    show(ended(st) ? "end" : "play");
+    if (sameGame && (s.q.length > prev.q.length || s.p.length > prev.p.length)) playChanges(prev);
+    else if (ended(st) && !sameGame) popWin();
+  }
+
+  // ---------- dotazování ----------
+  let pollT = null, pollSeq = 0, lastChange = Date.now(), fails = 0;
+  function interval() {
+    const idle = Date.now() - lastChange;
+    const ms = idle < 5 * 60e3 ? 3000 : idle < 30 * 60e3 ? 10000 : 30000;
+    return fails ? Math.min(60000, ms * 2 ** Math.min(fails, 4)) : ms;
+  }
+  function schedule(ms) { clearTimeout(pollT); pollT = setTimeout(poll, ms); }
+  async function poll() {
+    clearTimeout(pollT);
+    if (!room || room.v < 0 || document.hidden) return;
+    if (busy || animating) { schedule(1500); return; }
+    const id = room.id, seq = ++pollSeq;
+    try {
+      const d = await loadDoc(id);
+      if (!room || room.id !== id || seq !== pollSeq || busy || animating) return schedule(interval());
+      fails = 0;
+      if (net) { net = ""; render(); }
+      if (d) apply(d);
+    } catch {
+      fails++;
+      if (fails >= 2 && !net) { net = "Spojení vázne, zkouším to znovu…"; render(); }
+    }
+    schedule(interval());
+  }
+  function wake() { if (room && !document.hidden) { lastChange = Date.now(); poll(); } }
+  document.addEventListener("visibilitychange", wake);
+  window.addEventListener("pageshow", e => { if (e.persisted) wake(); });
+  window.addEventListener("online", wake);
+  window.addEventListener("focus", wake);
+
+  // ---------- hraní ----------
+  $("board").addEventListener("click", ev => {
+    const b = ev.target.closest(".cell");
+    if (!b || !canAct() || turn().kind !== "place") return;
+    const i = +b.dataset.i;
+    if (grid(st)[i] !== null) return;
+    if (pendingCell === i) { place(); return; }
+    pendingCell = i; render();
+    $("board").querySelector(`.cell[data-i="${i}"]`).focus({ preventScroll: true });
+  });
+  $("placeBtn").addEventListener("click", place);
+  $("placeCancel").addEventListener("click", () => { pendingCell = null; render(); });
+
+  async function place() {
+    if (pendingCell === null || !canAct() || turn().kind !== "place") return;
+    const cell = pendingCell, ph = turn(), len = st.p.length, qlen = st.q.length;
+    const from = $("handSlot").getBoundingClientRect();
+    const next = clone(st);
+    next.p.push(cell); next.t = Math.floor(Date.now() / 60000);
+    if (!await commit(next, cur => cur.p.length === len && cur.q.length === qlen)) return;
+    pendingCell = null; pendingCup = null; buzz();
+    show(ended(st) ? "end" : "play");
+    animating = true;
+    await fly(ph.cup, from, cellEl(cell), { ms: 520 });
+    animating = false;
+    if (ended(st)) { render(); popWin(); }
+    else { render(); if (matchMedia("(max-width: 899px)").matches) $("tray").scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: "center" }); }
+  }
+
+  $("trayCups").addEventListener("click", ev => {
+    const b = ev.target.closest(".pick");
+    if (!b || !canAct() || turn().kind !== "pick") return;
+    const id = +b.dataset.id;
+    pendingCup = pendingCup === id ? null : id;
+    render();
+    const again = $("trayCups").querySelector(`.pick[data-id="${id}"]`);
+    if (again) again.focus({ preventScroll: true });
+  });
+  $("napkinIn").addEventListener("input", () => { $("napkinCount").textContent = `${$("napkinIn").value.length} / 40`; });
+  $("giveBtn").addEventListener("click", give);
+  async function give() {
+    if (pendingCup === null || !canAct() || turn().kind !== "pick") return;
+    const id = pendingCup, len = st.q.length, plen = st.p.length;
+    const fromEl = $("trayCups").querySelector(`.pick[data-id="${id}"]`);
+    const fromRect = fromEl ? fromEl.getBoundingClientRect() : null;
+    const text = $("napkinIn").value.trim().slice(0, 40);
+    const next = clone(st);
+    next.q.push(id); next.t = Math.floor(Date.now() / 60000);
+    next.n = text ? { i: next.q.length - 1, text } : null;
+    if (!await commit(next, cur => cur.q.length === len && cur.p.length === plen)) return;
+    pendingCup = null; $("napkinIn").value = ""; buzz();
+    // nejdřív odjezd, pak nový stav (ghost prvek letí z místa, kde hrnek byl)
+    if (fromRect && !calm()) {
+      const ghost = document.createElement("div");
+      Object.assign(ghost.style, { position: "fixed", left: fromRect.left + "px", top: fromRect.top + "px", width: fromRect.width + "px", height: fromRect.height + "px" });
+      document.body.append(ghost);
+      if (fromEl) fromEl.style.visibility = "hidden";
+      animating = true;
+      await flyAway(id, ghost, $("oppSide"));
+      ghost.remove(); animating = false;
+    }
+    show("play");
+    toast(`Podáno. ${nameOf(st, opp())} teď pokládá.`);
+  }
+
+  async function rematch() {
+    if (busy || !me) return;
+    const win = winner(st);
+    const next = { x: st.x, o: st.o, s: win ? other(win.p) : other(st.s), q: [], p: [], t: null, k: st.k, kc: st.kc, c: "", n: null, w: seriesAfter(st) };
+    if (!await commit(next, cur => ended(cur), "Odvetu už mezitím založil soupeř.")) return;
+    pendingCell = null; pendingCup = null; $("napkinIn").value = "";
+    show("play");
+    toast(`Hra č. ${gameNo(st)}. První hrnek podává ${nameOf(st, st.s)}.`);
+  }
+  $("endPrimary").addEventListener("click", rematch);
+  $("endSecondary").addEventListener("click", () => {
+    const win = winner(st);
+    if (me && win && win.p !== me) copy(concedeText(), "Zkopírováno, vlož to do chatu");
+    else copyLink();
+  });
+
+  // ---------- přisednutí ----------
+  async function accept() {
+    if (busy || !room) return;
+    busy = true; render();
+    let d;
+    try { d = await loadDoc(room.id); }
+    catch { busy = false; toast("Spojení nevyšlo, zkus to znovu."); render(); return; }
+    const seat = d && (!d.sx ? "x" : !d.so ? "o" : null);
+    if (!d || !seat) { busy = false; toast("Výzvu už přijal někdo jiný. Můžeš přihlížet."); apply(d, true); show(ended(st) ? "end" : "play"); return; }
+    const nd = { ...d, v: d.v + 1, [seat === "x" ? "sx" : "so"]: device };
+    try { await saveDoc(room.id, nd); }
+    catch { busy = false; toast("Spojení nevyšlo, zkus to znovu."); render(); return; }
+    busy = false;
+    room.v = nd.v; room.sx = nd.sx || ""; room.so = nd.so || "";
+    st = decode(d.g) || st;
+    setMe(seat);
+    show(ended(st) ? "end" : "play");
+    animating = true;
+    try { await maybeHandover(); } finally { animating = false; render(); }
+  }
+  $("acceptBtn").addEventListener("click", accept);
+  function claim(p) {
+    if (!room || !confirm(`Pokračovat v tomhle prohlížeči jako ${nameOf(st, p)}?`)) return;
+    setMe(p); show(ended(st) ? "end" : "play");
+  }
+  $("claimX").addEventListener("click", () => claim("x"));
+  $("claimO").addEventListener("click", () => claim("o"));
+  $("introMine").addEventListener("click", () => claim(other(freeSeat() || "o")));
+  function setMe(p) { me = p; store.set("kaf-r-" + room.id, p); remember(); }
+
+  // ---------- kopírování ----------
+  function toast(text) {
+    const t = $("toast");
+    t.textContent = text; t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 3000);
+  }
+  async function copy(text, done) {
+    try { await navigator.clipboard.writeText(text); toast(done); }
+    catch { window.prompt("Zkopíruj si to:", text); }
+  }
+  const copyLink = () => copy(linkFor(), "Odkaz je zkopírovaný");
+  $("copyBtn").addEventListener("click", () => copy($("msg").value, "Zkopírováno, vlož to do chatu"));
+  $("copyLinkBtn").addEventListener("click", copyLink);
+  $("copyTopBtn").addEventListener("click", copyLink);
+  $("waitCopy").addEventListener("click", copyLink);
+  $("backBtn").addEventListener("click", () => show(ended(st) ? "end" : "play"));
+
+  // ---------- rozehrané hry na tomhle zařízení ----------
+  function recentRooms() { return attempt(() => JSON.parse(store.get("kaf-rooms") || "[]"), []).filter(r => r && /^[0-9a-z]{6,24}$/.test(r.id)); }
+  function remember() {
+    if (!room || !st) return;
+    const list = recentRooms().filter(r => r.id !== room.id);
+    list.unshift({ id: room.id, x: st.x, o: st.o, me });
+    store.set("kaf-rooms", JSON.stringify(list.slice(0, 5)));
+  }
+
+  // ---------- založení hry ----------
+  async function createRoom(s) {
+    if (busy) return;
+    busy = true; render();
+    const id = randId(12);
+    const d = { app: "kaficka", g: s, v: 1, sx: device, so: "" };
+    try { await saveDoc(id, d); }
+    catch { busy = false; toast("Hru se nepodařilo založit. Zkontroluj připojení a zkus to znovu."); render(); return; }
+    busy = false; st = s; shareKind = "new";
+    room = { id, v: 1, sx: d.sx, so: d.so };
+    bootSeq++;
+    history.replaceState(null, "", location.pathname + location.search + "#r." + id);
+    setMe("x");
+    lastChange = Date.now(); schedule(3000);
+    setView("share");
+  }
+  const syncCustom = () => { $("customWrap").hidden = $("stakeSel").value !== "c"; };
+  $("stakeSel").addEventListener("change", syncCustom);
+  $("stakeCustom").addEventListener("input", () => { $("customCount").textContent = `${$("stakeCustom").value.length} / 32`; });
+  $("setupNote").addEventListener("input", () => { $("setupCount").textContent = `${$("setupNote").value.length} / 40`; });
+  $("nameO").addEventListener("input", () => { $("starterO").textContent = $("nameO").value.trim() || "Soupeř"; });
+  function showSetup() {
+    if (!$("nameX").value) $("nameX").value = store.get("kaf-name") || "";
+    syncCustom(); setView("setup");
+  }
+  $("newGameBtn").addEventListener("click", () => {
+    clearTimeout(pollT); bootSeq++;
+    room = null; me = null; st = null; busy = false; pendingCell = null; pendingCup = null; net = "";
+    history.pushState(null, "", location.pathname + location.search);
+    showSetup();
+  });
+  $("infoNew").addEventListener("click", () => $("newGameBtn").click());
+  $("infoRetry").addEventListener("click", boot);
+  $("setupForm").addEventListener("submit", ev => {
+    ev.preventDefault();
+    const x = $("nameX").value.trim(), o = $("nameO").value.trim();
+    if (!x || !o || busy) return;
+    store.set("kaf-name", x);
+    let k = $("stakeSel").value, kc = "";
+    if (k === "c") { kc = $("stakeCustom").value.trim().slice(0, 32); if (!kc) k = ""; }
+    const starter = document.querySelector('input[name="starter"]:checked').value;
+    pendingCell = null; pendingCup = null; $("napkinIn").value = "";
+    createRoom({ x, o, s: starter, q: [], p: [], t: null, k, kc, c: $("setupNote").value.trim().slice(0, 40), n: null, w: [0, 0] });
+  });
+
+  // ---------- start ----------
+  function info(title, meta, retry) {
+    $("infoTitle").textContent = title;
+    $("infoMeta").textContent = meta; $("infoMeta").hidden = !meta;
+    $("infoRetry").hidden = !retry; $("infoNew").hidden = retry === null;
+    setView("info");
+  }
+  async function openRoom(id, seq) {
+    room = { id, v: -1, sx: "", so: "" };
+    info("Otevírám hru…", "", null);
+    let d;
+    try { d = await loadDoc(id); }
+    catch { if (seq === bootSeq) info("Hru se nepodařilo načíst.", "Zkontroluj připojení a zkus to znovu.", true); return; }
+    if (seq !== bootSeq) return;
+    const s = d && decode(d.g);
+    if (!s) { room = null; info("Tahle hra tu není.", "Odkaz je špatně zkopírovaný, nebo hra vypršela (ukládá se 30 dní od posledního tahu).", false); return; }
+    st = s; room.v = d.v; room.sx = d.sx || ""; room.so = d.so || "";
+    const saved = store.get("kaf-r-" + id);
+    me = saved === "x" || saved === "o" ? saved : room.sx === device ? "x" : room.so === device ? "o" : null;
+    lastChange = Date.now(); schedule(3000);
+    if (!me && freeSeat() && !ended(st)) { setView("intro"); return; }
+    remember();
+    setView(ended(st) ? "end" : "play");
+    if (ended(st)) { popWin(); return; }
+    animating = true;
+    try { await maybeHandover(); } finally { animating = false; render(); }
+  }
+  function boot() {
+    const seq = ++bootSeq;
+    clearTimeout(pollT);
+    room = null; me = null; busy = false; pendingCell = null; pendingCup = null; net = ""; fails = 0;
+    const h = (location.hash || "").replace(/^#/, "");
+    const r = /^r\.([0-9a-z]{6,24})$/.exec(h);
+    if (r) { openRoom(r[1], seq); return; }
+    st = null; showSetup();
+  }
+  window.addEventListener("hashchange", boot);
+  boot();
+})();
+</script>
+</html>
