@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="herna-protokol" content="1">
 <meta name="theme-color" content="#141B2B">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -544,6 +545,10 @@ html.standalone #recent { order: -1; }
 /* bot ubrousky nečte, tak je ve sólu schované pole i tlačítko */
 body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !important; }
 
+/* ---------- v Herně (iframe, protokol Herny): žádné sdílení, nová hra ani celá obrazovka, Herna má vlastní lištu ---------- */
+body[data-herna] #newGameBtn, body[data-herna] #copyTopBtn, body[data-herna] #fsBtn, body[data-herna] #fsHint, body[data-herna] #infoNew, body[data-herna] #waitBox { display: none !important; }
+body[data-herna] .logo { pointer-events: none; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
@@ -951,9 +956,14 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
   // sólo (trénink proti botovi): čistě lokální stav; solo = {name, games, next} nebo null. Nic se nesynchronizuje ani neukládá.
   let solo = null, botT = null;
   const BOT = "o", BOT_NAME = "Kafebot";
+  // v Herně (protokol: react-apps/HERNA-PROTOKOL.md): HERNA = {r, seat, zaklada, names} z adresy #herna=1&..., jinak null a hra běží po staru
+  let HERNA = null, hernaFaze = "";
+  const hernaSent = new Set();
+  const doHerny = z => { if (HERNA && window.parent !== window) window.parent.postMessage({ herna: 1, ...z }, "*"); };
   const turn = () => st ? phase(st) : null;
   const freeSeat = () => !room ? null : !room.sx ? "x" : !room.so ? "o" : null;
-  const canAct = () => !!st && !!room && !!me && !busy && !animating && turn().kind !== "end" && turn().who === me;
+  const waiting = () => !!HERNA && !!room && !!me && !!freeSeat();   // v Herně se nehraje, dokud nesedí oba
+  const canAct = () => !!st && !!room && !!me && !busy && !animating && !waiting() && turn().kind !== "end" && turn().who === me;
   const opp = () => me ? other(me) : null;
   // bez klepnutí na stránku prohlížeč vibraci blokuje a hlásí chybu do konzole (scéna podání přijde ze synchronizace)
   const buzz = () => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(12); } catch {} };
@@ -1008,13 +1018,28 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
       const m = topMeta();
       [["sc", m.sc], ["sk", m.sk]].forEach(([c, t]) => { if (!t) return; const e = document.createElement("span"); e.className = c; e.textContent = t; tm.append(e); });
     }
-    $("copyTopBtn").hidden = !inGame || view === "share";
+    $("copyTopBtn").hidden = !!HERNA || !inGame || view === "share";
     document.title = canAct() ? "Jsi na tahu · Kafíčka" : "Kafíčka";
     if (view === "setup") renderSetup();
     if (view === "intro") renderIntro();
     if (view === "play" || view === "end") renderGame();
     if (view === "share") renderShare();
     if (solo) soloKick();
+    hernaSync();
+  }
+  // Herna: fáze a výsledek partie. Posílá se z render(), takže pokrývá tah, polling, odvetu i reload.
+  function hernaSync() {
+    if (!HERNA) return;
+    const live = !!st && !!room && room.v >= 0 && !solo && (view === "play" || view === "end");
+    const f = !live ? "ceka" : ended(st) ? "konec" : freeSeat() ? "ceka" : "hraje";
+    if (f !== hernaFaze) { hernaFaze = f; doHerny({ typ: "stav", faze: f }); }
+    if (f === "konec" && me) {
+      const key = room.id + ":" + gameNo(st);
+      if (hernaSent.has(key)) return;
+      hernaSent.add(key);
+      const win = winner(st), seatX = me === "x" ? HERNA.seat : 1 - HERNA.seat;
+      doHerny({ typ: "vysledek", partie: key, vitez: win ? (win.p === "x" ? seatX : 1 - seatX) : null });
+    }
   }
   function topMeta() {
     if (solo) return { sc: "Trénink", sk: "proti botovi" };
@@ -1178,7 +1203,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
       $("oppTag").textContent = nameOf(st, o);
       const seatFree = freeSeat() === o;
       if (isEnd) { $("oppWhat").textContent = "Dohráno."; $("oppSub").textContent = ""; }
-      else if (seatFree) { $("oppWhat").textContent = "Ještě nesedí u stolu."; $("oppSub").textContent = "Odkaz zatím nikdo neotevřel."; }
+      else if (seatFree) { $("oppWhat").textContent = "Ještě nesedí u stolu."; $("oppSub").textContent = HERNA ? "Hra začne, jakmile se připojí." : "Odkaz zatím nikdo neotevřel."; }
       else if (ph.who === o && ph.kind === "pick") {
         $("oppSide").classList.add("on"); steam.toggleAttribute("hidden", false);
         $("oppWhat").textContent = "Vybírá hrnek pro tebe…"; $("oppSub").textContent = solo ? "" : "objeví se tu sám";
@@ -1206,15 +1231,18 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
 
     // bottom: your hand
     const hand = $("hand"), slot = $("handSlot");
-    const picking = !!me && !isEnd && ph.who === me && ph.kind === "pick";
+    const picking = !!me && !isEnd && ph.who === me && ph.kind === "pick" && !waiting();
     hand.hidden = !me || isEnd || picking;   // při výběru hrnku stačí zásoba, ruka by jen brala místo
-    $("game").dataset.ph = !me || isEnd ? "other" : ph.who === me ? ph.kind : "wait";
+    $("game").dataset.ph = !me || isEnd ? "other" : ph.who === me && !waiting() ? ph.kind : "wait";
     $("tray").hidden = true; $("placeRow").hidden = true; $("handNoteBox").hidden = true;
     hand.classList.remove("on");
     slot.className = "slot empty"; slot.innerHTML = "";
     if (me && !isEnd) {
       const name = nameOf(st, o);
-      if (ph.who === me && ph.kind === "place") {
+      if (waiting()) {
+        $("handTitle").textContent = "Čekáš na soupeře.";
+        $("handDesc").textContent = "Hra začne, jakmile se druhý hráč připojí.";
+      } else if (ph.who === me && ph.kind === "place") {
         hand.classList.add("on");
         slot.className = "slot"; slot.innerHTML = cupBox(ph.cup);
         $("handTitle").textContent = `${name} ti podává hrnek.`;
@@ -1248,7 +1276,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
     }
 
     // spectators and the unopened link
-    const showWait = !isEnd && (!me || freeSeat() === o);
+    const showWait = !isEnd && !HERNA && (!me || freeSeat() === o);
     $("waitBox").hidden = !showWait;
     if (showWait) {
       $("claims").hidden = !!me; $("waitCopy").hidden = !me;
@@ -1359,6 +1387,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
       $("endPrimary").textContent = "Chci odvetu"; $("endSecondary").textContent = "Uznat porážku";
       $("endCaption").textContent = `Zkopíruje zprávu: „${concedeText()}“`;
     }
+    if (HERNA) { $("endSecondary").textContent = "Jiná hra"; $("endCaption").textContent = ""; }   // v Herně žádný odkaz ani uznání porážky do chatu
     $("endCaption").hidden = !$("endCaption").textContent;
   }
   function concedeText() {
@@ -1694,6 +1723,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
   }
   $("endPrimary").addEventListener("click", rematch);
   $("endSecondary").addEventListener("click", () => {
+    if (HERNA) { doHerny({ typ: "jina-hra" }); return; }
     if (solo) { toSetup(); return; }   // Vyzvat soupeře: normální setup, ze sóla nic nepřechází
     const win = winner(st);
     if (me && win && win.p !== me) copy(concedeText(), "Zkopírováno, vlož to do chatu");
@@ -1750,7 +1780,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
   // ---------- rozehrané hry na tomhle zařízení ----------
   function recentRooms() { return attempt(() => JSON.parse(store.get("kaf-rooms") || "[]"), []).filter(r => r && /^[0-9a-z]{6,24}$/.test(r.id)); }
   function remember() {
-    if (solo || !room || !st) return;
+    if (solo || HERNA || !room || !st) return;
     const list = recentRooms().filter(r => r.id !== room.id);
     list.unshift({ id: room.id, x: st.x, o: st.o, me });
     store.set("kaf-rooms", JSON.stringify(list.slice(0, 5)));
@@ -1783,6 +1813,7 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
     syncCustom(); setView("setup");
   }
   function toSetup() {
+    if (HERNA) return;
     clearTimeout(pollT); stopBot(); bootSeq++;
     solo = null; room = null; me = null; st = null; busy = false; pendingCell = null; pendingCup = null; net = "";
     history.pushState(null, "", location.pathname + location.search);
@@ -1932,10 +1963,64 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
     animating = true;
     try { await maybeHandover(); } finally { animating = false; render(); }
   }
+  // Herna: adresa #herna=1&m=…&r=…&seat=0|1&names=A,B&zaklada=0|1 (jména každé zvlášť přes encodeURIComponent, proto se čárka dělí v surovém řetězci)
+  function parseHerna() {
+    const raw = (location.hash || "").replace(/^#/, ""), q = {};
+    raw.split("&").forEach(kv => { const i = kv.indexOf("="); if (i > 0) q[kv.slice(0, i)] = kv.slice(i + 1); });
+    if (q.herna !== "1" || !/^[0-9a-z]{6,24}$/.test(q.r || "") || (q.seat !== "0" && q.seat !== "1")) return null;
+    const nm = (q.names || "").split(",").map(t => attempt(() => decodeURIComponent(t), t).trim().slice(0, 16));
+    return { r: q.r, seat: +q.seat, zaklada: q.zaklada === "1", names: [nm[0] || "Hráč 1", nm[1] || "Hráč 2"] };
+  }
+  // Hra v Herně: žádná výzva ani setup. Zakladatel (zaklada=1) založí dokument r rovnou se jmény, druhý čeká, až dokument vznikne, a sedne si sám.
+  // Kdo je x a kdo o, určuje dokument (d.hs = sedadlo Herny, které hraje za x), ne token zařízení: dva panely v jednom prohlížeči se nepopletou.
+  async function openHerna(seq) {
+    const H = HERNA, id = H.r;
+    room = { id, v: -1, sx: "", so: "" };
+    info(H.zaklada ? "Prostírám stůl…" : "Čeká se, až hra naskočí…", "", null);
+    let d = null;
+    while (seq === bootSeq) {
+      try {
+        const got = await loadDoc(id);
+        if (seq !== bootSeq) return;
+        if (got && decode(got.g)) { d = got; break; }
+        if (!got && H.zaklada) {
+          const x = H.names[H.seat], o = H.names[1 - H.seat];
+          const g = { x, o, s: Math.random() < .5 ? "x" : "o", q: [], p: [], t: null, k: "", kc: "", c: "", n: null, w: [0, 0], gn: 1, m: menuFor(id, 1), sg: "", r: null };
+          const nd = { app: "kaficka", g, v: 1, sx: device, so: "", hs: H.seat };
+          await saveDoc(id, nd);
+          d = nd; break;
+        }
+      } catch {}
+      await wait(1500);
+    }
+    if (seq !== bootSeq || !d) return;
+    // sednout si: obsadit své místo tokenem zařízení (podle toho druhý pozná, že už se může hrát)
+    while (seq === bootSeq) {
+      me = d.hs === 0 || d.hs === 1 ? (d.hs === H.seat ? "x" : "o") : (d.sx === device ? "x" : d.so === device ? "o" : !d.sx ? "x" : !d.so ? "o" : null);
+      if (!me || (me === "x" ? d.sx : d.so)) break;
+      try {
+        const nd = { ...d, v: d.v + 1, [me === "x" ? "sx" : "so"]: device };
+        await saveDoc(id, nd);
+        d = nd; break;
+      } catch { await wait(1500); if (seq !== bootSeq) return; try { d = (await loadDoc(id)) || d; } catch {} }
+    }
+    if (seq !== bootSeq) return;
+    st = decode(d.g); room.v = d.v; room.sx = d.sx || ""; room.so = d.so || "";
+    if (me) setMe(me);
+    lastChange = Date.now(); schedule(3000);
+    setView(ended(st) ? "end" : "play");
+    if (ended(st)) { popWin(); return; }
+    animating = true;
+    try { await maybeHandover(); } finally { animating = false; render(); }
+  }
+  $("logo").addEventListener("click", ev => { if (HERNA) ev.preventDefault(); });
   function boot() {
     const seq = ++bootSeq;
     clearTimeout(pollT); stopBot(); solo = null;
     room = null; me = null; busy = false; pendingCell = null; pendingCup = null; net = ""; fails = 0;
+    HERNA = parseHerna(); hernaFaze = "";
+    if (HERNA) document.body.dataset.herna = "1"; else delete document.body.dataset.herna;
+    if (HERNA) { st = null; doHerny({ typ: "pripraveno" }); openHerna(seq); return; }
     const h = (location.hash || "").replace(/^#/, "");
     if (h === "solo") { soloStart($("nameX").value.trim() || store.get("kaf-name") || ""); return; }
     const r = /^r\.([0-9a-z]{6,24})$/.exec(h);
