@@ -548,6 +548,17 @@ body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !i
 /* ---------- v Herně (iframe, protokol Herny): žádné sdílení, nová hra ani celá obrazovka, Herna má vlastní lištu ---------- */
 body[data-herna] #newGameBtn, body[data-herna] #copyTopBtn, body[data-herna] #fsBtn, body[data-herna] #fsHint, body[data-herna] #infoNew, body[data-herna] #waitBox { display: none !important; }
 body[data-herna] .logo { pointer-events: none; }
+/* V rámu Herny je pod lištou Herny (51 px) míň svislého místa: telefon na výšku se musí vejít bez posouvání ve všech fázích.
+   Lišta hry je nižší, pravidla jsou na kartě hry v Herně, lístek se sázkou nemá smysl (v Herně se hraje bez sázky),
+   „Ještě nepodané hrnky“ a nadpis zásoby ustoupí jen na nízkém displeji (do 660 px). */
+@media (max-width: 599px) {
+  body[data-herna] .top { padding: 0 8px; }
+  body[data-herna] details.rules, body[data-herna] .ticket { display: none; }
+  body[data-herna] .result { padding-top: 12px; padding-bottom: 12px; }
+}
+@media (max-width: 599px) and (max-height: 660px) {
+  body[data-herna] .pool, body[data-herna] #trayTitle { display: none; }   /* zásoba sama říká, co se dá podat; stav „Klepni na hrnek“ zůstává pod ní */
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
