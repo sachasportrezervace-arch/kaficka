@@ -165,7 +165,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
    právě pracuje (ruka s tlačítkem Položit, nebo zásoba hrnků s tlačítkem Podat). Od 900 px: deska vlevo, ovládání vpravo.
    --rest = svislé místo mimo desku (lišta, pruh soupeře, popisky pytle, spodní blok, mezery); ladí se měřením v testu. */
 .game {
-  --rest: 396px;
+  --rest: 404px;
   --bs: max(216px, min(calc(100vw - 40px - env(safe-area-inset-left) - env(safe-area-inset-right)), calc(100vh - var(--rest) - env(safe-area-inset-top) - env(safe-area-inset-bottom))));
   --bs: max(216px, min(calc(100vw - 40px - env(safe-area-inset-left) - env(safe-area-inset-right)), calc(100dvh - var(--rest) - env(safe-area-inset-top) - env(safe-area-inset-bottom))));
   display: grid; gap: 6px;
@@ -181,7 +181,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 /* po dohrání se deska na mobilu zvolna zmenší, aby pod ní bylo vidět vítězství i tlačítko Odveta */
 .boardsack, .board { transition: width 420ms var(--ease), height 420ms var(--ease); }
-body[data-view="end"] .game { --rest: 420px; }
+body[data-view="end"] .game { --rest: 428px; }
 
 /* opponent's side of the table */
 .side { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; border-radius: var(--r2); background: var(--night-2); border: 1px solid var(--line); }
@@ -324,7 +324,7 @@ body[data-view="end"] .game { --rest: 420px; }
   .score { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 4px 0 2px; border-top: 2px dashed var(--line); border-bottom: 2px dashed var(--line); font: 800 22px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .score b { font: 900 84px/1 var(--stencil-font); letter-spacing: .02em; color: var(--text); font-variant-numeric: tabular-nums; }
   .score .w { color: var(--jade); }
-  .chip { min-height: 46px; font-size: 26px; padding: 8px 16px 6px; }
+  .common .chip { min-height: 46px; font-size: 26px; padding: 8px 16px 6px; }   /* .common: základní .chip stojí níž v souboru */
   .ticket { padding: 16px 22px; }
   .ticket .res { font-size: 24px; }
   .ticket.stamped { padding-right: 130px; min-height: 120px; }
@@ -415,7 +415,7 @@ html.standalone #recent { order: -1; }
 
 /* telefon na šířku (nízký viewport): deska vlevo podle výšky displeje, ovládání vpravo, zásoba v hustší mřížce */
 @media (min-width: 600px) and (max-height: 520px) {
-  .game { --bs: max(200px, calc(100dvh - 164px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 6px 14px; }
+  .game { --bs: max(200px, calc(100dvh - 176px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 6px 14px; }
   .game > .table { grid-column: 1; position: static; gap: 6px; }
   .game > .controls { grid-column: 2; gap: 8px; }
   .top { padding-top: 2px; padding-bottom: 2px; }
@@ -443,6 +443,96 @@ html.standalone #recent { order: -1; }
   .tray-act .btn { min-height: 48px; font-size: 16px; }
   .napkin-toggle { display: inline-grid; }
   .pool .cups { grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); }
+  /* pruh soupeře je tu úzký jako deska: kostka cukru jen jako ikona (popis nese aria-label), pára ustoupí */
+  .side .sugar { width: 44px; padding: 0; justify-content: center; }
+  .side .sugar span { display: none; }
+  .side:has(.sugar:not([hidden])) .steam { display: none; }
+  .side:has(.sugar:not([hidden])) .tag { max-width: 6.5em; }
+}
+
+/* ---------- menu dne, kostka cukru, tituly a podšálky ---------- */
+/* jména a tituly hráčů jsou potisk na horním okraji pytle, kostka cukru stojí u jména toho, kdo ji má */
+.sack-names { display: flex; align-items: center; justify-content: space-between; gap: 6px; text-align: left; opacity: 1; }
+.sack-names .pn { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 6px; }
+.sack-names .pn.o { justify-content: flex-end; }
+.sack-names .nl { min-width: 0; display: flex; align-items: center; gap: 6px; }
+.sack-names .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sack-names .rk { flex: none; font-size: 10px; letter-spacing: .08em; padding: 3px 5px 2px; border: 1.5px solid currentColor; border-radius: 3px; line-height: 1; margin: -5px 0; }
+.sack-names .vs { flex: none; opacity: .65; }
+.cube { flex: none; width: 18px; height: 18px; margin: -4px 0; }
+.boardsack .foot .d { display: none; }
+@media (min-width: 900px) { .sack-names .rk { font-size: 12px; padding: 4px 6px 3px; margin: -6px 0; } .cube { width: 22px; height: 22px; margin: -5px 0; } .boardsack .foot .d { display: inline; } }
+/* úzký pytel (mobil, telefon na šířku): titul je druhý řádek pod jménem, jméno má celou půlku šířky; řádek je rezervovaný vždy, ať deska neskáče */
+@media (max-width: 899px), (max-height: 520px) {
+  .boardsack .sack-names { align-items: flex-start; padding: 2px 0 4px; font-size: 12px; }
+  .sack-names .pn { flex-direction: column; align-items: flex-start; gap: 2px; min-height: 23px; }
+  .sack-names .pn.o { align-items: flex-end; }
+  .sack-names .nl { max-width: 100%; }
+  .sack-names .rk { font-size: 9px; letter-spacing: .16em; padding: 0; border: 0; margin: 0; opacity: .8; }
+  .sack-names .vs { align-self: center; }
+  .cube { width: 15px; height: 15px; margin: -2px 0; }
+}
+/* značky menu dne na jutě: pod hrnky (.under) a čára výhry nad nimi (.over) */
+.marks { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.marks.under { z-index: 0; }
+.marks.over { z-index: 0; }   /* nad podšálky a zvýrazněním, ale pod hrnky (.cupbox má z-index 1) */
+.marks.over.brk { z-index: 2; }   /* závorky čtverce, středu a rohů leží v rozích políček mimo hrnky, můžou být navrchu */
+.marks path, .marks rect { fill: none; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.marks .mk { stroke: var(--stencil); stroke-width: 2; opacity: .62; }
+.marks .mk.sq { stroke-width: 1.5; opacity: .3; }   /* křížky Čtverečků jsou hustá síť, musí ustoupit místům na hrnky */
+.marks .hb { stroke: rgba(247, 243, 234, .55); stroke-width: 7; }
+.marks .hl { stroke: var(--red); stroke-width: 3.5; }
+@media (prefers-reduced-motion: no-preference) { .marks.over { animation: markin 520ms var(--ease) 260ms both; } }
+@keyframes markin { from { opacity: 0; } to { opacity: 1; } }
+/* podšálek pod hrnky, které hráč položil: styl podle titulu (1 až 4) */
+[data-sau="1"] { --sa-bg: #2A3A66; --sa-bd: #8FA3D6; --sa-st: solid; --sb: 2px; }
+[data-sau="2"] { --sa-bg: #6E2233; --sa-bd: #F2D9C9; --sa-st: dashed; --sb: 3px; }
+[data-sau="3"] { --sa-bg: #3F6B4A; --sa-bd: #D7E6C9; --sa-st: dotted; --sb: 3px; }
+[data-sau="4"] { --sa-bg: #6B4426; --sa-bd: #E3B75F; --sa-st: double; --sb: 5px; }
+.cell.full[data-sau]::before { inset: 8%; border: var(--sb) var(--sa-st) var(--sa-bd); background: var(--sa-bg); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2), 0 2px 3px rgba(30, 16, 4, .35); }
+.cell.full[data-sau].dimmed::before { opacity: .45; }
+/* s podšálkem by plný kroužek výhry byl čtvrtý kruh kolem hrnku: jen tenký červený obrys bez krémového lemu */
+.cell.win[data-sau]::after { inset: 1%; border-width: 3px; box-shadow: none; }
+/* kostka cukru: tlačítko vedle soupeřova pruhu */
+.side .sugar { flex: none; min-height: 44px; padding: 0 12px; font-size: 15px; gap: 8px; }
+.sugar .cube { width: 24px; height: 24px; margin: 0; }
+/* vrácený hrnek v zásobě: vidět, ale nejde podat znovu */
+.pick.back, .pick.back:hover { opacity: .32; background: var(--night-3); outline: 2px dashed var(--edge); outline-offset: -3px; cursor: default; }
+/* konec partie: typ čáry, příští partie, nový titul */
+.linechip { display: inline-flex; align-items: center; min-height: 38px; padding: 4px 10px 3px; border-radius: var(--r1); border: 2px solid var(--porcelain); color: var(--porcelain); font: 800 20px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; }
+.endnext { line-height: 1.35; }
+/* „Společné:“ patří k čipům vlastností, nezalomí se od nich; na mobilu ho u výhry přidanou čarou nahradí sám čip čáry, ať je Odveta vidět */
+.cgrp { display: inline-flex; align-items: center; gap: 6px 10px; }
+@media (max-width: 599px) {
+  .common:has(.linechip) #endCommonLbl { display: none; }
+  .common:has(.linechip) { gap: 6px 8px; }
+  .common:has(.linechip) .chip, .common .linechip { min-height: 36px; font-size: 18px; padding: 5px 10px 4px; }
+}
+/* u čtverce, středu a rohů vítězná místa ukazují závorky, kroužek výhry by byl druhý signál */
+.board:has(.marks.brk) .cell.win::after { display: none; }
+/* na mobilu po dohrání pruh soupeře odpadá: vítěze říká nadpis a deska, místo se hodí pro výsledek, nový titul a Odvetu */
+@media (max-width: 599px) { body[data-view="end"] .side { display: none; } }
+.unlock { display: flex; align-items: center; gap: 12px; padding: 8px 0 0; border-top: 2px dashed var(--line); }
+/* když se k výsledku přidá nový titul, ať se na mobilu pořád vejde tlačítko Odveta */
+@media (max-width: 599px) {
+  .game[data-unlock] .result { padding: 10px 14px; gap: 7px; }
+  .game[data-unlock] .result h2 { font-size: 24px; }
+  .game[data-unlock] .unlock { padding-top: 6px; }
+  .game[data-unlock] .unlock .swatch { width: 44px; height: 44px; }
+  .game[data-unlock] .unlock .swatch .cupbox { width: 26px; height: 26px; }
+}
+.unlock .swatch { flex: none; width: 52px; height: 52px; border-radius: 50%; background: var(--sa-bg); border: var(--sb) var(--sa-st) var(--sa-bd); display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .2); }
+.unlock .swatch .cupbox { width: 30px; height: 30px; }
+.unlock b { display: block; font: 800 19px/1.1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; }
+.unlock .s { display: block; font-size: 13px; line-height: 1.3; color: var(--muted); margin-top: 2px; }
+@media (min-width: 900px) {
+  .linechip { min-height: 46px; font-size: 26px; padding: 6px 14px 4px; }
+  .endnext { font-size: 15px; }
+  .unlock { padding-top: 14px; }
+  .unlock .swatch { width: 64px; height: 64px; }
+  .unlock .swatch .cupbox { width: 38px; height: 38px; }
+  .unlock b { font-size: 24px; }
+  .unlock .s { font-size: 15px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -541,11 +631,12 @@ html.standalone #recent { order: -1; }
       <div class="side" id="oppSide">
         <span class="tag" id="oppTag"></span>
         <div class="what"><b id="oppWhat"></b><span id="oppSub"></span></div>
+        <button class="btn ghost sugar" id="sugarBtn" type="button" hidden aria-label="Vrátit podaný hrnek, použít kostku cukru"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.2-8 4.2-8-4.2z" fill="#FBF6EC"/><path d="M4 7.2l8 4.2V21l-8-4.2z" fill="#E4DCCB"/><path d="M20 7.2l-8 4.2V21l8-4.2z" fill="#CBBFA8"/><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z" fill="none" stroke="#1E2A4A" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Vrátit (cukr)</span></button>
         <svg class="steam" id="oppSteam" viewBox="0 0 34 34" aria-hidden="true"><path d="M10 26c-3-4 3-6 0-11"/><path d="M17 26c-3-4 3-6 0-11"/><path d="M24 26c-3-4 3-6 0-11"/></svg>
         <div class="slot empty" id="oppSlot"></div>
       </div>
       <div class="sack boardsack">
-        <div class="sack-label" id="sackTop"></div>
+        <div class="sack-label sack-names" id="sackTop"></div>
         <div class="board" id="board" role="grid" aria-label="Stůl 4 × 4"></div>
         <div class="foot"><span id="sackLeft"></span><span id="sackRight"></span></div>
       </div>
@@ -556,16 +647,18 @@ html.standalone #recent { order: -1; }
         <h2 id="endTitle"></h2>
         <div class="score" id="endScore" aria-hidden="true"></div>
         <p class="shared" id="endShared"></p>
-        <div class="common" id="endCommon" hidden><span class="small dim">Společné:</span><div class="chips" id="endChips"></div></div>
+        <div class="common" id="endCommon" hidden><span class="cgrp"><span class="small dim" id="endCommonLbl">Společné:</span><div class="chips" id="endChips"></div></span></div>
         <div class="ticket">
           <span class="lbl" id="tLabel">Sázka</span>
           <span class="res" id="tRes"></span>
           <div class="stamp" id="tStamp" hidden></div>
         </div>
+        <div class="unlock" id="unlock" hidden><span class="swatch" id="swatch" aria-hidden="true"></span><div><b id="unlockT"></b><span class="s" id="unlockS"></span></div></div>
         <div class="endacts">
           <button class="btn wide" id="endPrimary" type="button"></button>
           <button class="btn ghost wide" id="endSecondary" type="button"></button>
         </div>
+        <p class="small dim endnext" id="endNext"></p>
         <p class="small dim" id="endCaption"></p>
       </div>
 
@@ -714,6 +807,9 @@ html.standalone #recent { order: -1; }
   // g = {x, o, s, q, p, t, k, kc, c, n, w}: jména, kdo podává první hrnek, q = podané hrnky v pořadí,
   // p = místa, kam se položily (p[i] nese hrnek q[i]), t = minuta posledního tahu, k/kc = sázka,
   // c = vzkaz k výzvě, n = {i, text} vzkaz na ubrousku k podanému hrnku q[i], w = výhry [x, o].
+  // Rozšíření (chybí-li, platí výchozí, staré hry se hrají dál): gn = číslo partie v sérii (jinak výhry + 1; remíza ho nezvyšuje),
+  // m = menu dne 0 až 3 (index v MENUS, výchozí Klasika), sg = kdo má nepoužitou kostku cukru ("x", "o", ""),
+  // r = [hrnek, q.length] po vrácení hrnku cukrem: tenhle hrnek se při dalším podání (q.length === r[1]) nesmí podat znovu.
   const API = "https://mantledb.sh/v2/";
   const docUrl = id => `${API}kaficka-${id}/hra`;
   const BASE_URL = location.origin + location.pathname;
@@ -748,27 +844,76 @@ html.standalone #recent { order: -1; }
     const w = Array.isArray(g.w) && g.w.length === 2 ? g.w.map(n => Number.isInteger(n) && n >= 0 ? Math.min(n, 999) : 0) : [0, 0];
     const k = /^[1-6c]$/.test(g.k || "") ? g.k : "", kc = str(g.kc, 32);
     const n = g.n && Number.isInteger(g.n.i) && str(g.n.text, 40) ? { i: g.n.i, text: str(g.n.text, 40) } : null;
-    return { x, o, s: g.s, q: [...g.q], p: [...g.p], t: Number.isFinite(g.t) ? g.t : null, k: k === "c" && !kc ? "" : k, kc, c: str(g.c, 40), n, w };
+    const m = Number.isInteger(g.m) && g.m >= 0 && g.m < MENUS.length ? g.m : 0;
+    const gn = Number.isInteger(g.gn) && g.gn >= 1 && g.gn <= 9999 ? g.gn : 0;
+    const sg = g.sg === "x" || g.sg === "o" ? g.sg : "";
+    const r = Array.isArray(g.r) && g.r.length === 2 && g.r.every(Number.isInteger) && g.r[0] >= 0 && g.r[0] < 16 && g.r[1] >= 0 && g.r[1] <= 15 ? [g.r[0], g.r[1]] : null;
+    return { x, o, s: g.s, q: [...g.q], p: [...g.p], t: Number.isFinite(g.t) ? g.t : null, k: k === "c" && !kc ? "" : k, kc, c: str(g.c, 40), n, w, m, gn, sg, r };
   }
-  const clone = s => ({ ...s, q: [...s.q], p: [...s.p], w: [...s.w], n: s.n ? { ...s.n } : null });
+  const clone = s => ({ ...s, q: [...s.q], p: [...s.p], w: [...s.w], n: s.n ? { ...s.n } : null, r: s.r ? [...s.r] : null });
 
   // ---------- pravidla ----------
   const other = p => p === "x" ? "o" : "x";
   const nameOf = (s, p) => p === "x" ? s.x : s.o;
   const picker = (s, i) => i % 2 === 0 ? s.s : other(s.s);   // kdo podal hrnek q[i]; položí ho ten druhý
-  const LINES = [];
-  for (let r = 0; r < 4; r++) LINES.push([0, 1, 2, 3].map(c => r * 4 + c));
-  for (let c = 0; c < 4; c++) LINES.push([0, 1, 2, 3].map(r => r * 4 + c));
-  LINES.push([0, 5, 10, 15], [3, 6, 9, 12]);
+  // Menu dne: jedna sada čar na partii. Klasika = řady, sloupce, úhlopříčky; ostatní k nim něco přidají.
+  // Čtverečky (čtverec 2 × 2) je varianta z Wikipedie (Quarto), Rohy a Kolem stolu jsou naše domácí pravidla.
+  const BASE_LINES = [];
+  for (let r = 0; r < 4; r++) BASE_LINES.push({ t: "row", c: [0, 1, 2, 3].map(c => r * 4 + c) });
+  for (let c = 0; c < 4; c++) BASE_LINES.push({ t: "col", c: [0, 1, 2, 3].map(r => r * 4 + c) });
+  BASE_LINES.push({ t: "dia", c: [0, 5, 10, 15] }, { t: "dia", c: [3, 6, 9, 12] });
+  const SQ_LINES = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) SQ_LINES.push({ t: "sq", c: [r * 4 + c, r * 4 + c + 1, r * 4 + c + 4, r * 4 + c + 5] });
+  // deska jako torus: úhlopříčka, která na okraji vyjede, se vrací na druhé straně (d = směr, c0 = sloupec v prvním řádku)
+  const TOR_LINES = [];
+  for (const d of [1, -1]) for (let c0 = 0; c0 < 4; c0++) {
+    if ((d === 1 && c0 === 0) || (d === -1 && c0 === 3)) continue;   // tyhle dvě jsou obyčejné úhlopříčky
+    TOR_LINES.push({ t: "tor", d, c0, c: [0, 1, 2, 3].map(r => r * 4 + (c0 + d * r + 8) % 4) });
+  }
+  const MENUS = [
+    { name: "Klasika", short: "Řada, sloupec nebo úhlopříčka.", extra: [] },
+    { name: "Čtverečky", short: "Navíc vyhrává čtverec 2 × 2.", extra: SQ_LINES },
+    { name: "Rohy", short: "Navíc vyhrávají čtyři rohy nebo čtyři prostřední pole.", extra: [{ t: "cor", c: [0, 3, 12, 15] }, { t: "mid", c: [5, 6, 9, 10] }] },
+    { name: "Kolem stolu", short: "Úhlopříčky se na okraji stolu zalamují na druhou stranu.", extra: TOR_LINES },
+  ].map(m => ({ ...m, lines: [...BASE_LINES, ...m.extra] }));
+  const LINE_NAME = { sq: "Čtverec", cor: "Čtyři rohy", mid: "Střed", tor: "Kolem stolu" };
+  // Pořadí menu je ze seedu (id hry): první partie je vždy Klasika, pak se v každé čtveřici partií zamíchají všechna čtyři menu
+  // a první menu nové čtveřice není to, kterým skončila předchozí, takže se dvě po sobě jdoucí partie nikdy neopakují.
+  const hash = t => { let h = 2166136261; for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  function shuffled(arr, seed) {
+    const a = [...arr]; let t = seed >>> 0;
+    const rnd = () => { t = t + 0x6D2B79F5 | 0; let z = Math.imul(t ^ t >>> 15, 1 | t); z = z + Math.imul(z ^ z >>> 7, 61 | z) ^ z; return ((z ^ z >>> 14) >>> 0) / 4294967296; };
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+    return a;
+  }
+  function menuFor(id, gn) {
+    const cyc = Math.floor((gn - 1) / 4);
+    let prevLast = -1, cur = [0];
+    for (let c = 0; c <= cyc; c++) {
+      cur = c === 0 ? [0, ...shuffled([1, 2, 3], hash(id + ":0"))] : shuffled([0, 1, 2, 3], hash(id + ":" + c));
+      if (cur[0] === prevLast) [cur[0], cur[1]] = [cur[1], cur[0]];
+      prevLast = cur[3];
+    }
+    return cur[(gn - 1) % 4];
+  }
+  // Tituly za výhry v sérii; každý odemyká podšálek pod hrnky, které hráč položil (styl 1 až 4 v CSS, data-sau)
+  const RANKS = [
+    { w: 1, name: "Učeň", sau: "modrý" },
+    { w: 3, name: "Barista", sau: "vínový" },
+    { w: 5, name: "Pražič", sau: "zelený" },
+    { w: 8, name: "Pražmistr", sau: "se zlatým okrajem" },
+  ];
+  const rankOf = wins => RANKS.reduce((r, k, i) => wins >= k.w ? i + 1 : r, 0);   // 0 = zatím bez titulu
   function grid(s) { const g = new Array(16).fill(null); s.p.forEach((cell, i) => g[cell] = s.q[i]); return g; }
   function winner(s) {
     if (!s.p.length) return null;
     const g = grid(s), last = s.p[s.p.length - 1];
-    for (const line of LINES) {
+    for (const ln of MENUS[s.m].lines) {   // obyčejné čáry jsou první, takže mají přednost před přidanými
+      const line = ln.c;
       if (!line.includes(last) || line.some(c => g[c] === null)) continue;
       let on = 15, off = 15;
       line.forEach(c => { on &= g[c]; off &= ~g[c] & 15; });
-      if (on || off) return { p: other(picker(s, s.p.length - 1)), cells: line, on, off };
+      if (on || off) return { p: other(picker(s, s.p.length - 1)), cells: line, on, off, ln };
     }
     return null;
   }
@@ -804,7 +949,7 @@ html.standalone #recent { order: -1; }
     if (h < 48) return `před ${h} h`;
     return `před ${Math.round(h / 24)} dny`;
   }
-  const gameNo = s => s.w[0] + s.w[1] + 1;
+  const gameNo = s => s.gn || s.w[0] + s.w[1] + 1;
   const COLS = "ABCD";
   const coord = i => COLS[i % 4] + (Math.floor(i / 4) + 1);
 
@@ -814,12 +959,14 @@ html.standalone #recent { order: -1; }
       <li>Na stole je 16 míst (4 × 4) a 16 hrnků. Každý je jiný ve čtyřech vlastnostech: velký nebo malý, espresso (tmavé) nebo latte (světlé), kulatý nebo hranatý, s pěnou nebo bez pěny.</li>
       <li>Hrnek si nevybíráš. Soupeř ti ho podá, ty ho položíš na volné místo a pak ze zbylých vybereš hrnek pro něj.</li>
       <li>Vyhrává, kdo položí čtvrtý hrnek do řady, sloupce nebo úhlopříčky, kde mají všechny čtyři aspoň jednu vlastnost společnou. Je jedno, kdo položil ty předchozí.</li>
+      <li>Každá partie má menu dne, pro oba stejné. Klasika: jen řady, sloupce a úhlopříčky. Čtverečky: navíc vyhrává čtverec 2 × 2. Rohy: navíc čtyři rohy nebo čtyři prostřední pole. Kolem stolu: úhlopříčky se na okraji zalamují na druhou stranu. První partie je vždy Klasika, menu je vidět v patičce desky a jako značky na jutě.</li>
       <li>Když dojdou hrnky a nikdo čtveřici nesložil, je to remíza.</li>
-      <li>Co položíš, to platí. Podaný hrnek se nevrací.</li>
+      <li>Co položíš, to platí. Podaný hrnek se nevrací, jedině s kostkou cukru: tu má na další partii ten, kdo prohrál tu předchozí (po remíze ani v první partii ji nemá nikdo). Jednou za partii s ní vrátíš hrnek, který ti soupeř podal, a on musí podat jiný.</li>
+      <li>Za výhry v sérii dostaneš titul u jména (1 výhra Učeň, 3 Barista, 5 Pražič, 8 Pražmistr) a pod hrnky, které položíš, podšálek v barvě titulu.</li>
     </ol>
     <div class="legend">${[[1, "velký", 0, "malý"], [3, "espresso", 1, "latte"], [5, "hranatý", 1, "kulatý"], [9, "s pěnou", 1, "bez pěny"]].map(([a, on, b, off]) =>
       `<div>${cupBox(a)}<span>${on}</span></div><div>${cupBox(b)}<span>${off}</span></div>`).join("")}</div>
-    <p class="small dim">Je to desková hra Quarto (Blaise Muller, 1991) s hrnky místo figurek. Pravidla podle <a href="https://en.wikipedia.org/wiki/Quarto_(board_game)" target="_blank" rel="noopener">Wikipedie</a>; varianta se čtvercem 2 × 2 se nehraje.</p>
+    <p class="small dim">Je to desková hra Quarto (Blaise Muller, 1991) s hrnky místo figurek. Základní pravidla podle <a href="https://en.wikipedia.org/wiki/Quarto_(board_game)" target="_blank" rel="noopener">Wikipedie</a>, která uvádí i čtverec 2 × 2 jako variantu mnoha edic. Rohy, Kolem stolu, kostka cukru a tituly jsou naše domácí pravidla.</p>
   </div>`;
   document.querySelectorAll("[data-rules]").forEach(d => d.innerHTML = rulesHTML);
   // na velkém displeji je pod ovládáním volné místo, pravidla s legendou vlastností tam rovnou leží otevřená
@@ -889,13 +1036,63 @@ html.standalone #recent { order: -1; }
     $("acceptBtn").textContent = busy ? "Sedám si…" : "Přijmout výzvu";
   }
 
+  const cubeSVG = label => `<svg class="cube" viewBox="0 0 24 24" role="img" aria-label="${label}"><title>${label}</title><path d="M12 3l8 4.2-8 4.2-8-4.2z" fill="#FBF6EC"/><path d="M4 7.2l8 4.2V21l-8-4.2z" fill="#E4DCCB"/><path d="M20 7.2l-8 4.2V21l8-4.2z" fill="#CBBFA8"/><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z" fill="none" stroke="#1E2A4A" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+  // Horní okraj pytle: jména, tituly a kostka cukru u toho, kdo ji má
+  function renderNames(W) {
+    const top = $("sackTop"); top.textContent = "";
+    ["x", "o"].forEach((p, i) => {
+      if (i === 1) { const v = document.createElement("span"); v.className = "vs"; v.textContent = "×"; v.setAttribute("aria-hidden", "true"); top.append(v); }
+      const wrap = document.createElement("span"); wrap.className = "pn " + p;
+      const nl = document.createElement("span"); nl.className = "nl"; wrap.append(nl);   // kostka a jméno; titul je vedle, na úzkém pytli pod nimi
+      if (st.sg === p && !ended(st)) nl.insertAdjacentHTML("beforeend", cubeSVG(`${nameOf(st, p)} má kostku cukru, jednou za partii může vrátit podaný hrnek`));
+      const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = nameOf(st, p); nl.append(nm);
+      const r = rankOf(W[p === "x" ? 0 : 1]);
+      if (r) { const rk = document.createElement("i"); rk.className = "rk"; rk.style.fontStyle = "normal"; rk.textContent = RANKS[r - 1].name; wrap.append(rk); }
+      top.append(wrap);
+    });
+  }
+  // Značky menu dne na jutě. Souřadnice v políčkách (deska = 4 × 4), vykreslené pod hrnky.
+  const brackets = (x0, y0, x1, y1, a) => `M${x0} ${y0 + a}V${y0}H${x0 + a}M${x1 - a} ${y0}H${x1}V${y0 + a}M${x1} ${y1 - a}V${y1}H${x1 - a}M${x0 + a} ${y1}H${x0}V${y1 - a}`;
+  function marksUnder(m) {
+    let d = "";
+    if (m === 1) { for (let i = 1; i < 4; i++) for (let j = 1; j < 4; j++) d += `M${i - .14} ${j}H${i + .14}M${i} ${j - .14}V${j + .14}`; }
+    else if (m === 2) d = brackets(.04, .04, 3.96, 3.96, .34) + brackets(1, 1, 3, 3, .3);
+    else if (m === 3) {
+      const a = .17;
+      for (let k = 1; k < 4; k++) d += `M${k} 0l${-a} ${a}M${k} 0l${a} ${a}M${k} 4l${-a} ${-a}M${k} 4l${a} ${-a}M0 ${k}l${a} ${-a}M0 ${k}l${a} ${a}M4 ${k}l${-a} ${-a}M4 ${k}l${-a} ${a}`;
+      d += `M0 0l${a} ${a}M4 4l${-a} ${-a}M4 0l${-a} ${a}M0 4l${a} ${-a}`;
+    } else return "";
+    return `<svg class="marks under" viewBox="0 0 4 4" preserveAspectRatio="none" aria-hidden="true"><path class="mk${m === 1 ? " sq" : ""}" d="${d}"/></svg>`;
+  }
+  // Čára výhry, kterou obyčejné zvýraznění čtyř políček nevysvětlí (čtverec, rohy, střed, zalomená úhlopříčka)
+  function marksOver(win) {
+    const ln = win && win.ln;
+    if (!ln || ln.t === "row" || ln.t === "col" || ln.t === "dia") return "";
+    const rc = ln.c.map(i => [i % 4, Math.floor(i / 4)]);
+    let d = "";
+    // čtverec, střed a rohy nejsou čára: místo spojnice (vypadala by jako řada nebo obvod) šablonové závorky kolem vítězných míst
+    if (ln.t === "sq" || ln.t === "mid") { const c0 = Math.min(...rc.map(a => a[0])), r0 = Math.min(...rc.map(a => a[1])); d = brackets(c0 + .04, r0 + .04, c0 + 1.96, r0 + 1.96, .42); }
+    else if (ln.t === "cor") d = rc.map(([c, r]) => brackets(c + .04, r + .04, c + .96, r + .96, .3)).join("");
+    else if (ln.t === "tor") {
+      for (let r = 0; r < 3; r++) {
+        const c = rc[r][0], c2 = rc[r + 1][0];
+        if (Math.abs(c - c2) === 1) d += `M${c + .5} ${r + .5}L${c2 + .5} ${r + 1.5}`;
+        else if (ln.d === 1) d += `M${c + .5} ${r + .5}L4 ${r + 1}M0 ${r + 1}L${c2 + .5} ${r + 1.5}`;
+        else d += `M${c + .5} ${r + .5}L0 ${r + 1}M4 ${r + 1}L${c2 + .5} ${r + 1.5}`;
+      }
+    }
+    return `<svg class="marks over${ln.t === "tor" ? "" : " brk"}" viewBox="0 0 4 4" preserveAspectRatio="none" aria-hidden="true"><path class="hb" d="${d}"/><path class="hl" d="${d}"/></svg>`;
+  }
+
   function renderGame() {
     const ph = turn(), isEnd = ph.kind === "end", win = winner(st), mine = canAct();
     const g = grid(st);
-    // sack labels: jména, hra, sázka
-    $("sackTop").textContent = `Kafíčka · ${st.x} × ${st.o}`;
-    $("sackLeft").textContent = `Hra č. ${gameNo(st)}`;
-    $("sackRight").textContent = `${st.p.length} / 16 hrnků`;
+    // sack labels: jména s tituly nahoře, hra a menu dne dole
+    const W = isEnd ? seriesAfter(st) : st.w;
+    renderNames(W);
+    $("sackLeft").textContent = `Hra č. ${gameNo(st)} · ${MENUS[st.m].name}`;
+    $("sackRight").textContent = `${st.p.length} / 16`;
+    const hrn = document.createElement("span"); hrn.className = "d"; hrn.textContent = " hrnků"; $("sackRight").append(hrn);
 
     // board
     const board = $("board");
@@ -910,6 +1107,8 @@ html.standalone #recent { order: -1; }
       if (id !== null) {
         b.classList.add("full"); b.innerHTML = cupBox(id);
         b.setAttribute("aria-label", `${coord(i)}: ${cupLong(id)}`);
+        const lvl = rankOf(W[other(picker(st, st.p.indexOf(i))) === "x" ? 0 : 1]);   // podšálek podle titulu toho, kdo hrnek položil
+        if (lvl) b.dataset.sau = lvl;
         if (i === last && !win) b.classList.add("last");
         if (winCells.includes(i)) { b.classList.add("win"); b.style.setProperty("--d", winCells.indexOf(i) * 90 + "ms"); }
         else if (win) b.classList.add("dimmed");
@@ -923,6 +1122,10 @@ html.standalone #recent { order: -1; }
       if (!placing || id !== null) b.setAttribute("aria-disabled", "true");
       board.append(b);
     }
+    board.insertAdjacentHTML("afterbegin", marksUnder(st.m));
+    board.insertAdjacentHTML("beforeend", marksOver(win));
+    board.dataset.m = st.m;
+    board.setAttribute("aria-label", `Stůl 4 × 4, menu dne ${MENUS[st.m].name}: ${MENUS[st.m].short}`);
     board.classList.toggle("locked", !placing);
 
     renderSides(ph);
@@ -976,6 +1179,11 @@ html.standalone #recent { order: -1; }
       $("oppSub").textContent = "";
     }
 
+    // kostka cukru: jen ve fázi pokládání, jen ten, kdo ji má; nejde na posledním hrnku (nebylo by z čeho vybírat)
+    const sug = $("sugarBtn");
+    sug.hidden = !(!!me && !isEnd && ph.kind === "place" && ph.who === me && st.sg === me && st.q.length <= 15);
+    sug.disabled = busy || animating;
+
     // bottom: your hand
     const hand = $("hand"), slot = $("handSlot");
     const picking = !!me && !isEnd && ph.who === me && ph.kind === "pick";
@@ -1009,9 +1217,11 @@ html.standalone #recent { order: -1; }
         $("handNoteBox").hidden = !n;
         if (n) { $("handNoteWho").textContent = "Tvůj ubrousek"; $("handNote").textContent = n; }
       } else {
-        $("handTitle").textContent = freeSeat() === o ? "Čekáš na soupeře." : "Ruce volné.";
+        const back = st.r && st.r[1] === st.q.length;   // hrnek jsem vrátil cukrem, soupeř vybírá jiný
+        $("handTitle").textContent = freeSeat() === o ? "Čekáš na soupeře." : back ? "Hrnek vracíš." : "Ruce volné.";
         $("handDesc").textContent = freeSeat() === o
           ? "Pošli odkaz do chatu. Jakmile ho soupeř otevře a přijme výzvu, uvidíš to tady."
+          : back ? `${name} vybírá jiný hrnek. Stránku můžeš zavřít, hra počká.`
           : `${name} vybírá, který hrnek ti podá. Stránku můžeš zavřít, hra počká.`;
       }
     }
@@ -1035,9 +1245,10 @@ html.standalone #recent { order: -1; }
   function renderTray(name) {
     const tray = $("tray"), box = $("trayCups");
     tray.hidden = false;
-    $("trayTitle").textContent = "Vyber hrnek, který podáš.";
+    const back = st.r && st.r[1] === st.q.length ? st.r[0] : -1;   // vrácený hrnek se teď nesmí podat znovu
+    $("trayTitle").textContent = back >= 0 ? `${name} vrací hrnek. Vyber jiný.` : "Vyber hrnek, který podáš.";
     const ids = left(st);
-    if (pendingCup !== null && !ids.includes(pendingCup)) pendingCup = null;
+    if (pendingCup !== null && (!ids.includes(pendingCup) || pendingCup === back)) pendingCup = null;
     box.textContent = "";
     ids.forEach(id => {
       const b = document.createElement("button");
@@ -1045,6 +1256,7 @@ html.standalone #recent { order: -1; }
       b.innerHTML = cupSVG(id);
       b.setAttribute("aria-label", cupLong(id));
       b.setAttribute("aria-pressed", String(pendingCup === id));
+      if (id === back) { b.disabled = true; b.classList.add("back"); b.setAttribute("aria-label", `${cupLong(id)}, vrácený hrnek, tentokrát ho podat nejde`); }
       box.append(b);
     });
     const ch = $("trayChosen");
@@ -1086,6 +1298,12 @@ html.standalone #recent { order: -1; }
       }));
       $("endCommon").hidden = false;
     }
+    // typ čáry, když to není řada, sloupec ani úhlopříčka: čip s názvem stojí před společnými vlastnostmi
+    const old = $("endCommon").querySelector(".linechip"); if (old) old.remove();
+    if (win && LINE_NAME[win.ln.t]) {
+      const lc = document.createElement("span"); lc.className = "linechip"; lc.textContent = LINE_NAME[win.ln.t];
+      $("endCommon").prepend(lc);
+    }
     $("tLabel").textContent = s ? "Sázka" : "Výsledek";
     $("tRes").textContent = !win ? (s ? "Sázka se přesouvá do odvety." : "Nikdo nevyhrál.")
       : !me ? (s ? s.third(W, L) : `Vyhrává ${W}.`)
@@ -1097,14 +1315,26 @@ html.standalone #recent { order: -1; }
     const loser = win ? L : nameOf(st, other(st.s));
     $("endPrimary").hidden = !me;
     $("endPrimary").disabled = busy;
+    // příští partie: menu dne, kdo začíná a kdo dostává kostku cukru
+    const nm = MENUS[menuFor(room.id, gameNo(st) + 1)].name;
+    $("endNext").textContent = win ? `Příští partie: ${nm}. ${loser} podává první hrnek a dostává kostku cukru.` : `Příští partie: ${nm}. První hrnek podává ${loser}.`;
+    // nový titul a podšálek: ukáže se jednou, v partii, kterou hráč dohrál výhrou přes hranici titulu
+    const wi = win ? (win.p === "x" ? 0 : 1) : -1, rBefore = wi >= 0 ? rankOf(st.w[wi]) : 0, rAfter = wi >= 0 ? rankOf(w[wi]) : 0;
+    $("unlock").hidden = !(rAfter > rBefore);
+    $("game").toggleAttribute("data-unlock", rAfter > rBefore);
+    if (rAfter > rBefore) {
+      $("swatch").dataset.sau = rAfter; $("swatch").innerHTML = cupBox(6);
+      $("unlockT").textContent = `${youWon ? "Nový titul" : `${W} má nový titul`}: ${RANKS[rAfter - 1].name}`;
+      $("unlockS").textContent = `Nový podšálek: ${RANKS[rAfter - 1].sau}.`;
+    }
     $("endCaption").textContent = "";
     if (!me) $("endSecondary").textContent = "Kopírovat odkaz";
-    else if (!win) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; $("endCaption").textContent = `První hrnek podává ${loser}.`; }
-    else if (youWon) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; $("endCaption").textContent = `První hrnek podává ${loser}.`; }
+    else if (!win || youWon) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; }
     else {
       $("endPrimary").textContent = "Chci odvetu"; $("endSecondary").textContent = "Uznat porážku";
       $("endCaption").textContent = `Zkopíruje zprávu: „${concedeText()}“`;
     }
+    $("endCaption").hidden = !$("endCaption").textContent;
   }
   function concedeText() {
     const win = winner(st), s = stake(st);
@@ -1224,7 +1454,7 @@ html.standalone #recent { order: -1; }
   async function maybeHandover() {
     const ph = turn();
     if (!me || ph.kind !== "place" || ph.who !== me) return;
-    const key = "kaf-seen-" + room.id, mark = `${gameNo(st)}-${st.q.length}`;
+    const key = "kaf-seen-" + room.id, mark = `${gameNo(st)}-${st.q.length}` + (st.r ? "r" + st.r[0] : "");   // po vrácení cukrem je to nový hrnek, scéna se přehraje znovu
     if (store.get(key) === mark) return;
     store.set(key, mark);
     const n = st.n && st.n.i === st.q.length - 1 ? st.n.text : "";
@@ -1281,7 +1511,7 @@ html.standalone #recent { order: -1; }
     if (!s || (d.v === room.v && !force)) { if (seats !== room.sx + "|" + room.so && (view === "play" || view === "intro")) render(); return; }
     const prev = st;
     room.v = d.v; st = s; lastChange = Date.now();
-    const sameGame = prev && s.x === prev.x && s.o === prev.o && s.s === prev.s && s.w[0] === prev.w[0] && s.w[1] === prev.w[1]
+    const sameGame = prev && s.x === prev.x && s.o === prev.o && s.s === prev.s && s.w[0] === prev.w[0] && s.w[1] === prev.w[1] && s.gn === prev.gn && s.m === prev.m
       && prev.q.every((id, i) => s.q[i] === id) && prev.p.every((c, i) => s.p[i] === c);
     if (pendingCell !== null && (grid(st)[pendingCell] !== null || !canAct() || turn().kind !== "place")) pendingCell = null;
     if (view === "intro") { if (!freeSeat()) show(ended(st) ? "end" : "play"); else render(); return; }
@@ -1377,7 +1607,7 @@ html.standalone #recent { order: -1; }
     const next = clone(st);
     next.q.push(id); next.t = Math.floor(Date.now() / 60000);
     next.n = text ? { i: next.q.length - 1, text } : null;
-    if (!await commit(next, cur => cur.q.length === len && cur.p.length === plen)) return;
+    if (!await commit(next, cur => cur.q.length === len && cur.p.length === plen && !(cur.r && cur.r[1] === len && cur.r[0] === id))) return;
     pendingCup = null; $("napkinIn").value = ""; $("tray").classList.remove("napkin-open"); buzz();
     // nejdřív odjezd, pak nový stav (ghost prvek letí z místa, kde hrnek byl)
     if (fromRect && !calm()) {
@@ -1393,10 +1623,37 @@ html.standalone #recent { order: -1; }
     toast(`Podáno. ${nameOf(st, opp())} teď pokládá.`);
   }
 
+  // Kostka cukru: placeč vrátí hrnek, který mu soupeř právě podal; soupeř musí podat jiný (vrácený hrnek se v tom tahu nedá vybrat).
+  // Hrnek se vrací do zásoby (q.length klesne o 1), takže vybírá zase ten samý hráč a fáze i pořadí zůstanou správně.
+  $("sugarBtn").addEventListener("click", giveBack);
+  async function giveBack() {
+    const ph = turn();
+    if (!me || busy || animating || ph.kind !== "place" || ph.who !== me || st.sg !== me || st.q.length > 15) return;
+    const cup = ph.cup, len = st.q.length, plen = st.p.length;
+    const fromEl = $("handSlot").querySelector(".cupbox");
+    const fromRect = fromEl ? fromEl.getBoundingClientRect() : null;
+    const next = clone(st);
+    next.q.pop(); next.sg = ""; next.r = [cup, len - 1]; next.t = Math.floor(Date.now() / 60000);
+    if (next.n && next.n.i === len - 1) next.n = null;
+    if (!await commit(next, cur => cur.q.length === len && cur.p.length === plen && cur.sg === me, "Mezitím se hra změnila, hrnek se nevrátil.")) return;
+    pendingCell = null; buzz();
+    if (fromRect && !calm()) {
+      const ghost = document.createElement("div");
+      Object.assign(ghost.style, { position: "fixed", left: fromRect.left + "px", top: fromRect.top + "px", width: fromRect.width + "px", height: fromRect.height + "px" });
+      document.body.append(ghost);
+      if (fromEl) fromEl.style.visibility = "hidden";
+      animating = true;
+      await flyAway(cup, ghost, $("oppSide"));
+      ghost.remove(); animating = false;
+    }
+    show("play");
+  }
+
   async function rematch() {
     if (busy || !me) return;
-    const win = winner(st);
-    const next = { x: st.x, o: st.o, s: win ? other(win.p) : other(st.s), q: [], p: [], t: null, k: st.k, kc: st.kc, c: "", n: null, w: seriesAfter(st) };
+    const win = winner(st), gn = gameNo(st) + 1;
+    // odvetu začíná poražený a dostává kostku cukru; po remíze ji nemá nikdo
+    const next = { x: st.x, o: st.o, s: win ? other(win.p) : other(st.s), q: [], p: [], t: null, k: st.k, kc: st.kc, c: "", n: null, w: seriesAfter(st), gn, m: menuFor(room.id, gn), sg: win ? other(win.p) : "", r: null };
     if (!await commit(next, cur => ended(cur), "Odvetu už mezitím založil soupeř.")) return;
     pendingCell = null; pendingCup = null; $("napkinIn").value = "";
     show("play");
@@ -1470,6 +1727,7 @@ html.standalone #recent { order: -1; }
     if (busy) return;
     busy = true; render();
     const id = randId(12);
+    s = { ...s, gn: 1, m: menuFor(id, 1), sg: "", r: null };   // první partie: Klasika, bez kostky cukru
     const d = { app: "kaficka", g: s, v: 1, sx: device, so: "" };
     try { await saveDoc(id, d); }
     catch { busy = false; toast("Hru se nepodařilo založit. Zkontroluj připojení a zkus to znovu."); render(); return; }
