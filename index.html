@@ -4,6 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#141B2B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kafíčka">
 <title>Kafíčka</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='70' y='40' width='22' height='20' rx='10' fill='none' stroke='%23F7F3EA' stroke-width='7'/%3E%3Ccircle cx='46' cy='50' r='40' fill='%23F7F3EA'/%3E%3Ccircle cx='46' cy='50' r='31' fill='%233B2219'/%3E%3Ccircle cx='46' cy='50' r='18' fill='%23FBF6EC'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,15 +49,15 @@ button { font: inherit; color: inherit; }
 a { color: var(--red-lt); text-underline-offset: .2em; }
 
 /* ---------- top bar ---------- */
-.top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1080px; margin: 0 auto; }
-.logo { font: 800 30px/1 var(--stencil-font); letter-spacing: .02em; text-transform: uppercase; color: var(--porcelain); text-decoration: none; display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1160px; margin: 0 auto; }
+.logo { font: 800 30px/1 var(--stencil-font); letter-spacing: .02em; text-transform: uppercase; color: var(--porcelain); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; }
 .logo svg { width: 30px; height: 30px; }
 .top-meta { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
-.iconbtn { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: var(--night-2); cursor: pointer; padding: 0 12px; font-size: 14px; font-weight: 600; }
+.iconbtn { min-width: 44px; min-height: 44px; display: inline-grid; grid-auto-flow: column; gap: 8px; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: var(--night-2); cursor: pointer; padding: 0 12px; font-size: 14px; font-weight: 600; }
 .iconbtn:hover { background: var(--night-3); }
 .iconbtn svg { width: 20px; height: 20px; }
 
-main { max-width: 1080px; margin: 0 auto; padding: 0 16px 48px; }
+main { max-width: 1160px; margin: 0 auto; padding: 0 16px 48px; }
 .narrow { max-width: 520px; margin: 0 auto; }
 
 /* ---------- type ---------- */
@@ -119,24 +125,43 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .board .cup, .flycup .cup, .slot .cup { filter: drop-shadow(0 4px 3px rgba(30, 16, 4, .45)); }
 
 /* ---------- game layout ---------- */
-.game { display: grid; gap: 14px; }
-@media (min-width: 900px) {
-  .game { grid-template-columns: minmax(0, 560px) minmax(0, 1fr); align-items: start; gap: 18px 36px; }
-  .game > .table { grid-column: 1; grid-row: 1 / span 6; position: sticky; top: 12px; }
-  .game > :not(.table) { grid-column: 2; }
+/* Dvě vlastní rozvržení. Mobil na výšku: desku zmenšuje výška displeje (--bs), aby se pod ni vešlo to, s čím hráč
+   právě pracuje (ruka s tlačítkem Položit, nebo zásoba hrnků s tlačítkem Podat). Od 900 px: deska vlevo, ovládání vpravo.
+   --rest = svislé místo mimo desku (lišta, pruh soupeře, popisky pytle, spodní blok, mezery); ladí se měřením v testu. */
+.game {
+  --rest: 396px;
+  --bs: max(216px, min(calc(100vw - 40px - env(safe-area-inset-left) - env(safe-area-inset-right)), calc(100vh - var(--rest) - env(safe-area-inset-top) - env(safe-area-inset-bottom))));
+  --bs: max(216px, min(calc(100vw - 40px - env(safe-area-inset-left) - env(safe-area-inset-right)), calc(100dvh - var(--rest) - env(safe-area-inset-top) - env(safe-area-inset-bottom))));
+  display: grid; gap: 6px;
 }
-.table { display: grid; gap: 10px; }
+.controls { display: grid; gap: 6px; align-content: start; }
+@media (min-width: 900px) {
+  .game { --bs: min(576px, calc(100vh - 252px)); --bs: min(576px, calc(100dvh - 252px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 18px 36px; }
+  .game > .table { grid-column: 1; position: sticky; top: 8px; }
+  .game > .controls { grid-column: 2; gap: 14px; }
+}
+.table { display: grid; gap: 6px; }
+@media (min-width: 900px) { .table { gap: 10px; } }
+body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 
 /* opponent's side of the table */
-.side { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 8px 12px 8px 8px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--line); }
-.tag { flex: none; font: 800 18px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 9px 12px 8px; border-radius: 10px; background: var(--porcelain); color: var(--night); max-width: 9.5em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; border-radius: 14px; background: var(--night-2); border: 1px solid var(--line); }
+.tag { flex: none; font: 800 15px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px 7px; border-radius: 9px; background: var(--porcelain); color: var(--night); max-width: 8em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side.on .tag { background: var(--jade); }
-.side .what { flex: 1; min-width: 0; font-size: 15px; line-height: 1.3; }
+.side .what { flex: 1; min-width: 0; font-size: 13px; line-height: 1.25; }
 .side .what b { display: block; font-weight: 700; }
-.side .what span { color: var(--muted); font-size: 13px; }
-.slot { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; }
+.side .what span { color: var(--muted); font-size: 12px; }
+.slot { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; }
 .slot.empty { border: 2px dashed var(--line); }
-.steam { width: 34px; height: 34px; flex: none; }
+.steam { width: 28px; height: 28px; flex: none; }
+@media (min-width: 900px) {
+  .side { gap: 12px; min-height: 64px; padding: 8px 12px 8px 8px; border-radius: 16px; }
+  .tag { font-size: 18px; padding: 9px 12px 8px; border-radius: 10px; max-width: 9.5em; }
+  .side .what { font-size: 15px; }
+  .side .what span { font-size: 13px; }
+  .slot { width: 52px; height: 52px; }
+  .steam { width: 34px; height: 34px; }
+}
 .steam path { fill: none; stroke: var(--muted); stroke-width: 2.4; stroke-linecap: round; opacity: .8; }
 @media (prefers-reduced-motion: no-preference) {
   .steam path { animation: steam 2.4s ease-in-out infinite; }
@@ -146,10 +171,15 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 @keyframes steam { 0% { transform: translateY(4px); opacity: 0; } 40% { opacity: .9; } 100% { transform: translateY(-6px); opacity: 0; } }
 
 /* the board */
-.boardsack { padding: 12px 12px 10px; }
-.boardsack .sack-label { padding: 2px 0 10px; }
-.boardsack .foot { display: flex; justify-content: space-between; padding: 8px 2px 0; font: 700 13px/1 var(--stencil-font); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
-.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; aspect-ratio: 1; position: relative; }
+.boardsack { width: calc(var(--bs) + 24px); justify-self: center; padding: 6px 12px 6px; }
+.boardsack .sack-label { padding: 2px 0 6px; font-size: 13px; }
+.boardsack .foot { display: flex; justify-content: space-between; padding: 6px 2px 0; font: 700 12px/1 var(--stencil-font); letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; width: var(--bs); height: var(--bs); position: relative; }
+@media (min-width: 900px) {
+  .boardsack { padding: 12px 12px 10px; }
+  .boardsack .sack-label { padding: 2px 0 10px; font-size: 15px; }
+  .boardsack .foot { padding: 8px 2px 0; font-size: 13px; }
+}
 .cell {
   position: relative; border: 0; padding: 7%; background: none; cursor: pointer; border-radius: 50%; aspect-ratio: 1;
   display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
@@ -170,13 +200,23 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .cell.dimmed .cupbox { opacity: .45; }
 
 /* your side: the hand */
-.hand { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--night-2); border: 1px solid var(--line); }
-.hand .slot { width: 84px; height: 84px; }
+.hand { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 8px 10px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--line); }
+.hand .slot { width: 60px; height: 60px; }
 .hand .slot.empty { border-color: #45526F; }
-.hand h3 { margin: 0 0 2px; font: 700 18px/1.25 var(--ui); }
-.hand .desc { font-size: 14px; color: var(--muted); }
-.hand .act { grid-column: 1 / -1; display: grid; gap: 10px; }
+.hand h3 { margin: 0 0 1px; font: 700 16px/1.2 var(--ui); }
+.hand .desc { font-size: 13px; line-height: 1.3; color: var(--muted); }
+.hand .act { grid-column: 1 / -1; display: grid; gap: 6px; }
+.hand .act:empty, .hand .act:not(:has(:not([hidden]))) { display: none; }
+.hand .btn { min-height: 48px; }
 .hand.on { border-color: var(--jade); box-shadow: 0 0 0 1px var(--jade) inset; }
+@media (min-width: 900px) {
+  .hand { gap: 10px 14px; padding: 14px; border-radius: 18px; }
+  .hand .slot { width: 84px; height: 84px; }
+  .hand h3 { font-size: 18px; margin-bottom: 2px; }
+  .hand .desc { font-size: 14px; }
+  .hand .act { gap: 10px; }
+  .hand .btn { min-height: 52px; }
+}
 
 /* napkin note */
 .napkin {
@@ -188,19 +228,43 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   overflow-wrap: anywhere;
 }
 .napkin small { display: block; font: 600 11px/1 var(--ui); letter-spacing: .08em; text-transform: uppercase; color: #6B6455; margin-bottom: 6px; }
+.hand .napkin { font-size: 18px; padding: 6px 12px 8px; transform: rotate(-1deg); }
+.hand .napkin small { font-size: 10px; margin-bottom: 3px; }
+@media (min-width: 900px) {
+  .hand .napkin { font-size: 21px; padding: 12px 16px 13px; transform: rotate(-1.6deg); }
+  .hand .napkin small { font-size: 11px; margin-bottom: 6px; }
+}
 
-/* tray of remaining cups */
-.tray { padding: 16px; border-radius: 18px; background: var(--night-2); border: 1px solid var(--jade); display: grid; gap: 14px; }
-.tray h3 { margin: 0; font: 700 18px/1.25 var(--ui); }
-.cups { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 6px; }
-.pick { border: 0; background: var(--night-3); border-radius: 14px; aspect-ratio: 1; padding: 8px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
+/* tray of remaining cups: na mobilu 8 sloupců (až 15 hrnků na 2 řádky), ubrousek sbalený za tlačítkem */
+.tray { padding: 8px 4px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--jade); display: grid; gap: 6px; }
+.tray h3 { margin: 0; padding: 0 8px; font: 700 16px/1.2 var(--ui); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cups { display: grid; grid-template-columns: repeat(8, minmax(44px, 1fr)); gap: 2px; }
+@media (max-width: 389px) { .cups { grid-template-columns: repeat(7, minmax(44px, 1fr)); } }
+.pick { border: 0; background: var(--night-3); border-radius: 10px; aspect-ratio: 1; padding: 4px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
 .pick:hover { background: #2E3B5C; }
-.pick[aria-pressed="true"] { background: var(--burlap); transform: translateY(-4px); box-shadow: 0 0 0 3px var(--red), 0 10px 18px -8px rgba(0,0,0,.7); }
+.pick[aria-pressed="true"] { background: var(--burlap); transform: translateY(-2px); box-shadow: 0 0 0 3px var(--red), 0 8px 14px -8px rgba(0,0,0,.7); }
 .pick:disabled { cursor: default; }
-.chosen { min-height: 22px; font-size: 15px; }
+.chosen { padding: 0 8px; min-height: 20px; font-size: 14px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chosen b { color: var(--porcelain); }
-.pool { display: grid; gap: 8px; }
-.pool .cups { grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.napkin-field { display: none; padding: 0 8px; gap: 4px; }
+.tray.napkin-open .napkin-field { display: grid; }
+.tray-act { display: flex; gap: 6px; padding: 0 4px; }
+.tray-act .btn { flex: 1; min-height: 48px; padding: 0 14px; font-size: 16px; min-width: 0; }
+.napkin-toggle { min-width: 48px; min-height: 48px; padding: 0; flex: none; }
+.napkin-toggle[aria-expanded="true"], .napkin-toggle.has { background: var(--porcelain); color: var(--night); border-color: var(--porcelain); }
+@media (min-width: 900px) {
+  .tray { padding: 16px; border-radius: 18px; gap: 14px; }
+  .tray h3 { padding: 0; font-size: 18px; white-space: normal; }
+  .cups { gap: 6px; grid-template-columns: repeat(8, 1fr); }
+  .pick { border-radius: 14px; padding: 8px; }
+  .chosen { padding: 0; min-height: 22px; font-size: 15px; }
+  .napkin-field { display: grid; padding: 0; gap: 6px; }
+  .tray-act { padding: 0; }
+  .tray-act .btn { min-height: 52px; font-size: 17px; }
+  .napkin-toggle { display: none; }
+}
+.pool { display: grid; gap: 6px; }
+.pool .cups { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
 .pool .pick { padding: 4px; border-radius: 10px; background: transparent; cursor: default; }
 
 /* status bits */
@@ -249,7 +313,7 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
 .handover { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; background: rgba(14, 19, 32, .78); cursor: pointer; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
 .handover .who { font: 900 clamp(30px, 9vw, 48px)/.95 var(--stencil-font); text-transform: uppercase; text-align: center; letter-spacing: .02em; }
 .handover .who span { display: block; color: var(--jade); font-size: .5em; letter-spacing: .14em; margin-top: 8px; }
-.handover .big { width: min(56vw, 230px); aspect-ratio: 1; }
+.handover .big { width: min(56vw, 230px, 30dvh); aspect-ratio: 1; }
 .handover .desc { text-align: center; font-size: 16px; color: var(--muted); }
 .handover .napkin { justify-self: center; font-size: 25px; max-width: min(86vw, 360px); text-align: center; }
 .handover .tap { font-size: 13px; color: var(--muted); }
@@ -257,17 +321,45 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
 
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60; background: var(--porcelain); color: var(--night); padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 15px; box-shadow: 0 12px 24px -10px rgba(0,0,0,.7); max-width: calc(100vw - 32px); text-align: center; }
 
+/* nápověda „Přidat na plochu“ (kde nejde Fullscreen API, třeba iPhone Safari) */
+.hint { position: fixed; z-index: 70; left: 8px; right: 8px; top: calc(60px + env(safe-area-inset-top)); max-width: 440px; margin: 0 auto; display: flex; align-items: flex-start; gap: 8px; padding: 12px 8px 12px 16px; border-radius: 14px; background: var(--porcelain); color: var(--night); box-shadow: 0 16px 30px -12px rgba(0, 0, 0, .75); font-size: 15px; line-height: 1.4; }
+.hint p { flex: 1; min-width: 0; padding-top: 2px; }
+.hint b { display: block; font: 800 20px/1.1 var(--stencil-font); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
+.hint .inl { width: 1.1em; height: 1.1em; vertical-align: -.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hint .iconbtn { background: transparent; border-color: rgba(20, 27, 43, .25); color: var(--night); flex: none; }
+.hint .iconbtn:hover { background: rgba(20, 27, 43, .08); }
+
+/* lišta na úzkém displeji: logo jen jako znak, „Nová hra“ jako ikona, aby se do lišty vešly tři tlačítka a stav série */
+.iconbtn .lbl { display: inline; }
+.iconbtn .plus { display: none; }
+@media (max-width: 599px) {
+  .top { padding: 4px 8px; gap: 6px; }
+  main { padding-left: 8px; padding-right: 8px; }
+  .top-meta { font-size: 12px; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  body:not([data-view="setup"]) .logo-t { display: none; }
+  #newGameBtn { padding: 0; }
+  #newGameBtn .lbl { display: none; }
+  #newGameBtn .plus { display: block; }
+}
+/* spuštěno z plochy: rozehrané hry nahoře, ať se do hry dá hned vrátit */
+html.standalone #recent { order: -1; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
 </style>
 
 <header class="top">
-  <a class="logo" href="./" id="logo" aria-label="Kafíčka, nová hra"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="70" y="40" width="22" height="20" rx="10" fill="none" stroke="#F7F3EA" stroke-width="7"/><circle cx="46" cy="50" r="40" fill="#F7F3EA"/><circle cx="46" cy="50" r="31" fill="#3B2219"/><circle cx="46" cy="50" r="17" fill="#FBF6EC"/></svg>Kafíčka</a>
+  <a class="logo" href="./" id="logo" aria-label="Kafíčka, nová hra"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="70" y="40" width="22" height="20" rx="10" fill="none" stroke="#F7F3EA" stroke-width="7"/><circle cx="46" cy="50" r="40" fill="#F7F3EA"/><circle cx="46" cy="50" r="31" fill="#3B2219"/><circle cx="46" cy="50" r="17" fill="#FBF6EC"/></svg><span class="logo-t">Kafíčka</span></a>
   <div class="top-meta" id="topMeta"></div>
   <button class="iconbtn" id="copyTopBtn" type="button" aria-label="Zkopírovat odkaz na hru" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
-  <button class="iconbtn" id="newGameBtn" type="button" hidden>Nová hra</button>
+  <button class="iconbtn" id="fsBtn" type="button" aria-label="Celá obrazovka" title="Celá obrazovka" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path id="fsIcon" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="iconbtn" id="newGameBtn" type="button" aria-label="Nová hra" title="Nová hra" hidden><svg class="plus" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="lbl">Nová hra</span></button>
 </header>
+<div class="hint" id="fsHint" role="status" hidden>
+  <p><b>Přidat na plochu</b>V Safari klepni na Sdílet <svg class="inl" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 7.5L12 3.5l4 4M7 10H6v11h12V10h-1"/></svg>, pak na Přidat na plochu. Hra se potom otevře přes celou obrazovku.</p>
+  <button class="iconbtn" id="fsHintClose" type="button" aria-label="Zavřít nápovědu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div>
 
 <main>
   <!-- ---------- setup ---------- -->
@@ -358,64 +450,71 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
       </div>
     </div>
 
-    <div class="result panel" id="endBox" hidden>
-      <h2 id="endTitle"></h2>
-      <p class="shared" id="endShared"></p>
-      <div class="ticket">
-        <span class="lbl" id="tLabel">Sázka</span>
-        <span class="res" id="tRes"></span>
-        <span class="ser" id="tSer"></span>
-        <div class="stamp" id="tStamp" hidden></div>
-      </div>
-      <div class="stack" style="gap:10px">
-        <button class="btn wide" id="endPrimary" type="button"></button>
-        <button class="btn ghost wide" id="endSecondary" type="button"></button>
-        <p class="small dim" id="endCaption"></p>
-      </div>
-    </div>
-
-    <div class="hand" id="hand">
-      <div class="slot empty" id="handSlot"></div>
-      <div>
-        <h3 id="handTitle"></h3>
-        <p class="desc" id="handDesc"></p>
-      </div>
-      <div class="act" id="handAct">
-        <div id="handNoteBox" hidden><div class="napkin"><small id="handNoteWho"></small><span id="handNote"></span></div></div>
-        <div class="row" id="placeRow" hidden>
-          <button class="btn" id="placeBtn" type="button"></button>
-          <button class="btn ghost" id="placeCancel" type="button">Jinam</button>
+    <div class="controls">
+      <div class="result panel" id="endBox" hidden>
+        <h2 id="endTitle"></h2>
+        <p class="shared" id="endShared"></p>
+        <div class="ticket">
+          <span class="lbl" id="tLabel">Sázka</span>
+          <span class="res" id="tRes"></span>
+          <span class="ser" id="tSer"></span>
+          <div class="stamp" id="tStamp" hidden></div>
+        </div>
+        <div class="stack" style="gap:10px">
+          <button class="btn wide" id="endPrimary" type="button"></button>
+          <button class="btn ghost wide" id="endSecondary" type="button"></button>
+          <p class="small dim" id="endCaption"></p>
         </div>
       </div>
-    </div>
 
-    <div class="tray" id="tray" hidden>
-      <h3 id="trayTitle"></h3>
-      <div class="cups" id="trayCups"></div>
-      <p class="chosen" id="trayChosen" aria-live="polite"></p>
-      <label class="f">Napiš na ubrousek <span class="dim" style="font-weight:500">(nepovinné)</span>
-        <input type="text" id="napkinIn" maxlength="40" placeholder="Tenhle je s láskou.">
-      </label>
-      <span class="count" id="napkinCount">0 / 40</span>
-      <button class="btn wide" id="giveBtn" type="button" disabled></button>
-    </div>
-
-    <div class="wait panel" id="waitBox" hidden>
-      <p id="waitText" style="font-weight:700"></p>
-      <p id="waitMeta" class="dim small"></p>
-      <div class="row" id="claims" hidden>
-        <button class="btn ghost" id="claimX" type="button"></button>
-        <button class="btn ghost" id="claimO" type="button"></button>
+      <div class="hand" id="hand">
+        <div class="slot empty" id="handSlot"></div>
+        <div>
+          <h3 id="handTitle"></h3>
+          <p class="desc" id="handDesc"></p>
+        </div>
+        <div class="act" id="handAct">
+          <div id="handNoteBox" hidden><div class="napkin"><small id="handNoteWho"></small><span id="handNote"></span></div></div>
+          <div class="row" id="placeRow" hidden>
+            <button class="btn" id="placeBtn" type="button"></button>
+            <button class="btn ghost" id="placeCancel" type="button">Jinam</button>
+          </div>
+        </div>
       </div>
-      <button class="btn ghost" id="waitCopy" type="button" hidden>Zkopírovat odkaz</button>
-    </div>
-    <p class="net" id="net" hidden></p>
 
-    <div class="pool" id="poolBox">
-      <p class="small dim" id="poolTitle"></p>
-      <div class="cups" id="poolCups" aria-hidden="true"></div>
+      <div class="tray" id="tray" hidden>
+        <h3 id="trayTitle"></h3>
+        <div class="cups" id="trayCups"></div>
+        <p class="chosen" id="trayChosen" aria-live="polite"></p>
+        <div class="napkin-field" id="napkinField">
+          <label class="f"><span>Napiš na ubrousek <span class="dim" style="font-weight:500">(nepovinné)</span></span>
+            <input type="text" id="napkinIn" maxlength="40" placeholder="Tenhle je s láskou.">
+          </label>
+          <span class="count" id="napkinCount">0 / 40</span>
+        </div>
+        <div class="tray-act">
+          <button class="iconbtn napkin-toggle" id="napkinBtn" type="button" aria-expanded="false" aria-controls="napkinField" aria-label="Napsat na ubrousek" title="Napsat na ubrousek"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9.5 13h6M9.5 17h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="btn" id="giveBtn" type="button" disabled></button>
+        </div>
+      </div>
+
+      <div class="wait panel" id="waitBox" hidden>
+        <p id="waitText" style="font-weight:700"></p>
+        <p id="waitMeta" class="dim small"></p>
+        <div class="row" id="claims" hidden>
+          <button class="btn ghost" id="claimX" type="button"></button>
+          <button class="btn ghost" id="claimO" type="button"></button>
+        </div>
+        <button class="btn ghost" id="waitCopy" type="button" hidden>Zkopírovat odkaz</button>
+      </div>
+      <p class="net" id="net" hidden></p>
+
+      <div class="pool" id="poolBox">
+        <p class="small dim" id="poolTitle"></p>
+        <div class="cups" id="poolCups" aria-hidden="true"></div>
+      </div>
+      <details class="rules" data-rules></details>
     </div>
-    <details class="rules" data-rules></details>
   </section>
 
   <!-- ---------- share ---------- -->
@@ -622,6 +721,7 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
   // ---------- pohledy ----------
   function setView(v) {
     view = v;
+    document.body.dataset.view = v;
     for (const id of ["setup", "info", "intro", "game", "share"]) $(id).hidden = id !== (v === "play" || v === "end" ? "game" : v);
     $("newGameBtn").hidden = v === "setup";
     render();
@@ -758,7 +858,9 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
 
     // bottom: your hand
     const hand = $("hand"), slot = $("handSlot");
-    hand.hidden = !me || isEnd;
+    const picking = !!me && !isEnd && ph.who === me && ph.kind === "pick";
+    hand.hidden = !me || isEnd || picking;   // při výběru hrnku stačí zásoba, ruka by jen brala místo
+    $("game").dataset.ph = !me || isEnd ? "other" : ph.who === me ? ph.kind : "wait";
     $("tray").hidden = true; $("placeRow").hidden = true; $("handNoteBox").hidden = true;
     hand.classList.remove("on");
     slot.className = "slot empty"; slot.innerHTML = "";
@@ -832,7 +934,18 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
     $("giveBtn").disabled = pendingCup === null || busy || !canAct();
     $("giveBtn").textContent = busy ? "Podávám…" : `Podat hrnek: ${name}`;
     $("napkinCount").textContent = `${$("napkinIn").value.length} / 40`;
+    syncNapkin();
   }
+  function syncNapkin() {
+    const open = $("tray").classList.contains("napkin-open");
+    $("napkinBtn").setAttribute("aria-expanded", String(open));
+    $("napkinBtn").classList.toggle("has", !open && !!$("napkinIn").value.trim());
+  }
+  $("napkinBtn").addEventListener("click", () => {
+    $("tray").classList.toggle("napkin-open");
+    syncNapkin();
+    if ($("tray").classList.contains("napkin-open")) $("napkinIn").focus();
+  });
 
   function renderEnd(win) {
     const youWon = !!win && win.p === me, s = stake(st), w = seriesAfter(st);
@@ -1100,7 +1213,12 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
     await fly(ph.cup, from, cellEl(cell), { ms: 520 });
     animating = false;
     if (ended(st)) { render(); popWin(); }
-    else { render(); if (matchMedia("(max-width: 899px)").matches) $("tray").scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: "center" }); }
+    else {
+      render();
+      // zásoba se na mobilu vejde pod desku; posunout stránku jen kdyby ne
+      const t = $("tray").getBoundingClientRect();
+      if (!$("tray").hidden && (t.bottom > innerHeight || t.top < 0)) $("tray").scrollIntoView({ behavior: calm() ? "auto" : "smooth", block: "end" });
+    }
   }
 
   $("trayCups").addEventListener("click", ev => {
@@ -1112,7 +1230,7 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
     const again = $("trayCups").querySelector(`.pick[data-id="${id}"]`);
     if (again) again.focus({ preventScroll: true });
   });
-  $("napkinIn").addEventListener("input", () => { $("napkinCount").textContent = `${$("napkinIn").value.length} / 40`; });
+  $("napkinIn").addEventListener("input", () => { $("napkinCount").textContent = `${$("napkinIn").value.length} / 40`; syncNapkin(); });
   $("giveBtn").addEventListener("click", give);
   async function give() {
     if (pendingCup === null || !canAct() || turn().kind !== "pick") return;
@@ -1124,7 +1242,7 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
     next.q.push(id); next.t = Math.floor(Date.now() / 60000);
     next.n = text ? { i: next.q.length - 1, text } : null;
     if (!await commit(next, cur => cur.q.length === len && cur.p.length === plen)) return;
-    pendingCup = null; $("napkinIn").value = ""; buzz();
+    pendingCup = null; $("napkinIn").value = ""; $("tray").classList.remove("napkin-open"); buzz();
     // nejdřív odjezd, pak nový stav (ghost prvek letí z místa, kde hrnek byl)
     if (fromRect && !calm()) {
       const ghost = document.createElement("div");
@@ -1255,6 +1373,42 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
     pendingCell = null; pendingCup = null; $("napkinIn").value = "";
     createRoom({ x, o, s: starter, q: [], p: [], t: null, k, kc, c: $("setupNote").value.trim().slice(0, 40), n: null, w: [0, 0] });
   });
+
+  // ---------- celá obrazovka ----------
+  // Kde jde Fullscreen API (desktop, Android, iPad), tlačítko přepíná celou obrazovku. iPhone Safari ho pro stránky nemá,
+  // tam tlačítko ukáže nápovědu „Přidat na plochu“ (hra se pak otevře přes celou obrazovku). Z plochy tlačítko mizí.
+  const FS_ICON = { enter: "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5", exit: "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" };
+  const fsRoot = document.documentElement;
+  const fsRequest = fsRoot.requestFullscreen || fsRoot.webkitRequestFullscreen;
+  const fsExit = document.exitFullscreen || document.webkitExitFullscreen;
+  const onPhone = /iPhone|iPod/.test(navigator.userAgent);
+  const canFs = !!fsRequest && !!fsExit && !onPhone && (document.fullscreenEnabled ?? document.webkitFullscreenEnabled) !== false;
+  const fsOn = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+  const installed = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;   // display-mode: fullscreen platí i při Fullscreen API, proto ne
+  let hintT = null;
+  function hideHint() { clearTimeout(hintT); $("fsHint").hidden = true; }
+  function showHint() {
+    $("fsHint").hidden = false;
+    clearTimeout(hintT); hintT = setTimeout(hideHint, 12000);
+  }
+  function syncFs() {
+    const on = fsOn(), b = $("fsBtn"), label = on ? "Ukončit celou obrazovku" : "Celá obrazovka";
+    fsRoot.classList.toggle("standalone", installed());
+    b.hidden = installed();
+    b.setAttribute("aria-label", label); b.title = label;
+    if (canFs) b.setAttribute("aria-pressed", String(on)); else b.removeAttribute("aria-pressed");
+    $("fsIcon").setAttribute("d", on ? FS_ICON.exit : FS_ICON.enter);
+    if (on || b.hidden) hideHint();
+  }
+  $("fsBtn").addEventListener("click", async () => {
+    if (!canFs) { $("fsHint").hidden ? showHint() : hideHint(); return; }
+    try { await (fsOn() ? fsExit.call(document) : fsRequest.call(fsRoot, { navigationUI: "hide" })); }
+    catch { showHint(); }
+  });
+  $("fsHintClose").addEventListener("click", hideHint);
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, syncFs));
+  attempt(() => matchMedia("(display-mode: standalone)").addEventListener("change", syncFs));
+  syncFs();
 
   // ---------- start ----------
   function info(title, meta, retry) {
