@@ -12,14 +12,32 @@
 <meta name="apple-mobile-web-app-title" content="Kafíčka">
 <title>Kafíčka</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='70' y='40' width='22' height='20' rx='10' fill='none' stroke='%23F7F3EA' stroke-width='7'/%3E%3Ccircle cx='46' cy='50' r='40' fill='%23F7F3EA'/%3E%3Ccircle cx='46' cy='50' r='31' fill='%233B2219'/%3E%3Ccircle cx='46' cy='50' r='18' fill='%23FBF6EC'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@500..900&family=Schibsted+Grotesk:wght@400..800&family=Sedgwick+Ave&display=swap">
+<link rel="preload" href="fonts/bss-800-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bss-800-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/sg-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/sg-400-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Písma jsou součástí hry (fonts/, licence SIL OFL 1.1): statické řezy bez proměnné osy, aby se vykreslily stejně ve WebKitu, Chromiu i Firefoxu a hra nevolala Google. */
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/bss-700-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/bss-700-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 800; font-display: swap; src: url("fonts/bss-800-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 800; font-display: swap; src: url("fonts/bss-800-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 900; font-display: swap; src: url("fonts/bss-900-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Big Shoulders Stencil"; font-style: normal; font-weight: 900; font-display: swap; src: url("fonts/bss-900-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/sg-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/sg-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/sg-500-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/sg-500-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/sg-600-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 600; font-display: swap; src: url("fonts/sg-600-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/sg-700-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Schibsted Grotesk"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/sg-700-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Sedgwick Ave"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/sw-400-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Sedgwick Ave"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/sw-400-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* Svět: pražírna po zavírací době. Deska je jutový pytel se šablonovým potiskem na noční modrém pultu,
    hrnky shora, vzkazy fixou na ubrousku. Mobil první; od 900 px deska vlevo a ovládání vpravo. */
 :root {
-  --night: #141B2B; --night-2: #1D2740; --night-3: #26324F; --line: #34415F;
+  --night: #141B2B; --night-2: #1D2740; --night-3: #26324F; --line: #34415F; --edge: #62749C;
   --text: #EFE8D9; --muted: #A9B3C7;
   --burlap: #B8935F; --burlap-dk: #9A774A; --stencil: #1E2A4A;
   --red: #C23A26; --red-dk: #A32E1C; --red-lt: #F0806B;
@@ -30,6 +48,10 @@
   --ui: "Schibsted Grotesk", system-ui, sans-serif;
   --hand: "Sedgwick Ave", "Comic Sans MS", cursive;
   --ease: cubic-bezier(.16, 1, .3, 1);
+  /* zaoblení: 3 stupně (chip/hrnek 10, ovládací prvek 14, panel 18); stíny: 2 (tlačítko, zdvižený předmět) */
+  --r1: 10px; --r2: 14px; --r3: 18px;
+  --lift: 0 8px 14px -8px rgba(0, 0, 0, .6);
+  --lift-lg: 0 24px 40px -18px rgba(0, 0, 0, .7);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -37,8 +59,6 @@ html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; min-height: 100dvh; background: var(--night); color: var(--text);
   font: 400 16px/1.5 var(--ui);
-  background-image: radial-gradient(120% 70% at 50% 0%, #1E2944 0%, var(--night) 60%);
-  background-attachment: fixed;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 ::selection { background: var(--red); color: #fff; }
@@ -49,17 +69,31 @@ button { font: inherit; color: inherit; }
 a { color: var(--red-lt); text-underline-offset: .2em; }
 
 /* ---------- top bar ---------- */
-.top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1160px; margin: 0 auto; }
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 16px; max-width: 1240px; margin: 0 auto; }
 .logo { font: 800 30px/1 var(--stencil-font); letter-spacing: .02em; text-transform: uppercase; color: var(--porcelain); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; }
 .logo svg { width: 30px; height: 30px; }
-.top-meta { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: right; }
-.iconbtn { min-width: 44px; min-height: 44px; display: inline-grid; grid-auto-flow: column; gap: 8px; place-items: center; border-radius: 12px; border: 1px solid var(--line); background: var(--night-2); cursor: pointer; padding: 0 12px; font-size: 14px; font-weight: 600; }
+.top-meta { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); text-align: right; line-height: 1.25; }
+.top-meta span { display: inline-block; }
+.top-meta .sc { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.top-meta .sk::before { content: "·"; margin: 0 .5em; }
+.iconbtn { min-width: 44px; min-height: 44px; display: inline-grid; grid-auto-flow: column; gap: 8px; place-items: center; border-radius: var(--r2); border: 1px solid var(--edge); background: var(--night-2); cursor: pointer; padding: 0 12px; font-size: 14px; font-weight: 600; }
 .iconbtn:hover { background: var(--night-3); }
 .iconbtn svg { width: 20px; height: 20px; }
 
-main { max-width: 1160px; margin: 0 auto; padding: 0 16px 48px; }
+main { max-width: 1240px; margin: 0 auto; padding: 0 16px 48px; }
 .narrow { max-width: 520px; margin: 0 auto; }
 
+/* setup na velkém displeji: úvod vlevo, formulář vpravo, tlačítko Založit hru je hned vidět */
+@media (min-width: 900px) {
+  #setup { max-width: 1000px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 56px; align-items: start; }
+  #setup > .hero { grid-column: 1; grid-row: 1; padding-top: 8px; }
+  #setup > #setupForm { grid-column: 2; grid-row: 1 / span 3; gap: 12px; }
+  #setup > #recent { grid-column: 1; grid-row: 2; }
+  #setup > .rules { grid-column: 1; grid-row: 3; }
+}
+/* nadpis hlavních obrazovek je šablonový potisk na jutě, stejně jako výzva a deska */
+.herosack { padding: 14px 18px 16px; display: grid; gap: 12px; margin-top: 12px; }
+.herosack h1 { color: var(--stencil); text-align: center; }
 /* ---------- type ---------- */
 h1, h2, .stencil { font-family: var(--stencil-font); text-transform: uppercase; letter-spacing: .015em; font-weight: 800; line-height: .95; margin: 0; text-wrap: balance; }
 h1 { font-size: clamp(40px, 11vw, 64px); }
@@ -72,37 +106,39 @@ p { margin: 0; }
 /* ---------- controls ---------- */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 22px;
-  border-radius: 14px; border: 0; cursor: pointer; font: 700 17px/1.1 var(--ui); text-decoration: none;
+  border-radius: var(--r2); border: 0; cursor: pointer; font: 700 17px/1.1 var(--ui); text-decoration: none;
   background: var(--red); color: #fff; box-shadow: 0 6px 14px -6px rgba(0, 0, 0, .55), inset 0 -2px 0 rgba(0,0,0,.18);
   transition: transform 160ms var(--ease), background-color 160ms;
 }
 .btn:hover { background: var(--red-dk); }
 .btn:active { transform: translateY(1px) scale(.99); }
 .btn:disabled { opacity: .45; cursor: default; transform: none; }
-.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--edge); box-shadow: none; }
 .btn.ghost:hover { background: var(--night-2); }
 .btn.wide { width: 100%; }
 .btn span.sub { font-weight: 500; font-size: 14px; opacity: .8; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; }
 .row > .btn { flex: 1 1 auto; }
 
-label.f { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--muted); }
+label.f, .f > .f-t { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.f .opt { font-weight: 500; opacity: .85; }
+div.f { display: grid; gap: 6px; }
 input[type=text], select, textarea {
-  width: 100%; min-height: 50px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+  width: 100%; min-height: 50px; padding: 12px 14px; border-radius: var(--r2); border: 1px solid var(--edge);
   background: var(--night-2); color: var(--text); font: 500 17px/1.3 var(--ui);
 }
 input::placeholder, textarea::placeholder { color: #8A94AA; }
 select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 8l5 5 5-5' fill='none' stroke='%23A9B3C7' stroke-width='2'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; padding-right: 40px; }
 .count, .foot { font-variant-numeric: tabular-nums; }
 .count { font-size: 12px; color: var(--muted); text-align: right; font-weight: 500; }
-.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: 14px; background: var(--night-2); border: 1px solid var(--line); }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 4px; border-radius: var(--r2); background: var(--night-2); border: 1px solid var(--edge); }
 .seg label { position: relative; display: block; }
 .seg input { position: absolute; opacity: 0; inset: 0; }
-.seg span { display: grid; place-items: center; min-height: 48px; border-radius: 10px; font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; padding: 4px 8px; font-size: 15px; }
+.seg span { display: grid; place-items: center; min-height: 48px; border-radius: calc(var(--r2) - 4px); font-weight: 600; color: var(--muted); cursor: pointer; text-align: center; padding: 4px 8px; font-size: 15px; }
 .seg input:checked + span { background: var(--porcelain); color: var(--night); }
 .seg input:focus-visible + span { outline: 3px solid var(--jade); outline-offset: 2px; }
 
-.panel { background: var(--night-2); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+.panel { background: var(--night-2); border: 1px solid var(--line); border-radius: var(--r3); padding: 18px; }
 .stack { display: grid; gap: 16px; }
 .stack-lg { display: grid; gap: 28px; }
 
@@ -115,7 +151,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     repeating-linear-gradient(90deg, rgba(255, 238, 205, .12) 0 2px, transparent 2px 5px),
     radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(60, 38, 12, .35) 100%);
   border-radius: 6px;
-  box-shadow: 0 24px 40px -18px rgba(0, 0, 0, .7), 0 2px 0 rgba(255, 240, 210, .15) inset;
+  box-shadow: var(--lift-lg), 0 2px 0 rgba(255, 240, 210, .15) inset;
 }
 .sack-label { font: 800 15px/1 var(--stencil-font); letter-spacing: .12em; text-transform: uppercase; text-align: center; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sack-stripe { height: 6px; background: var(--red); opacity: .8; margin: 0 -2px; mask: repeating-linear-gradient(90deg, #000 0 14px, transparent 14px 16px); }
@@ -136,17 +172,20 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 }
 .controls { display: grid; gap: 6px; align-content: start; }
 @media (min-width: 900px) {
-  .game { --bs: min(576px, calc(100vh - 252px)); --bs: min(576px, calc(100dvh - 252px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 18px 36px; }
+  .game { --bs: min(680px, calc(100vh - 252px)); --bs: min(680px, calc(100dvh - 252px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 18px 36px; }
   .game > .table { grid-column: 1; position: sticky; top: 8px; }
   .game > .controls { grid-column: 2; gap: 14px; }
 }
 .table { display: grid; gap: 6px; }
 @media (min-width: 900px) { .table { gap: 10px; } }
 body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
+/* po dohrání se deska na mobilu zvolna zmenší, aby pod ní bylo vidět vítězství i tlačítko Odveta */
+.boardsack, .board { transition: width 420ms var(--ease), height 420ms var(--ease); }
+body[data-view="end"] .game { --rest: 420px; }
 
 /* opponent's side of the table */
-.side { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; border-radius: 14px; background: var(--night-2); border: 1px solid var(--line); }
-.tag { flex: none; font: 800 15px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px 7px; border-radius: 9px; background: var(--porcelain); color: var(--night); max-width: 8em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; border-radius: var(--r2); background: var(--night-2); border: 1px solid var(--line); }
+.tag { flex: none; font: 800 15px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px 7px; border-radius: var(--r1); background: var(--porcelain); color: var(--night); max-width: 8em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side.on .tag { background: var(--jade); }
 .side .what { flex: 1; min-width: 0; font-size: 13px; line-height: 1.25; }
 .side .what b { display: block; font-weight: 700; }
@@ -155,8 +194,8 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 .slot.empty { border: 2px dashed var(--line); }
 .steam { width: 28px; height: 28px; flex: none; }
 @media (min-width: 900px) {
-  .side { gap: 12px; min-height: 64px; padding: 8px 12px 8px 8px; border-radius: 16px; }
-  .tag { font-size: 18px; padding: 9px 12px 8px; border-radius: 10px; max-width: 9.5em; }
+  .side { gap: 12px; min-height: 64px; padding: 8px 12px 8px 8px; }
+  .tag { font-size: 18px; padding: 9px 12px 8px; max-width: 9.5em; }
   .side .what { font-size: 15px; }
   .side .what span { font-size: 13px; }
   .slot { width: 52px; height: 52px; }
@@ -184,8 +223,9 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
   position: relative; border: 0; padding: 7%; background: none; cursor: pointer; border-radius: 50%; aspect-ratio: 1;
   display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
 }
-.cell::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; border: 2px dashed rgba(30, 42, 74, .42); transition: border-color 160ms, transform 200ms var(--ease); }
-.cell .coord { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 700 14px/1 var(--stencil-font); letter-spacing: .08em; opacity: .4; pointer-events: none; }
+.cell::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; border: 2px dashed rgba(30, 42, 74, .62); transition: border-color 160ms, transform 200ms var(--ease); }
+.cell .coord { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 700 15px/1 var(--stencil-font); letter-spacing: .08em; opacity: .72; pointer-events: none; }
+@media (min-width: 900px) { .cell .coord { font-size: 18px; } }
 .cell.full::before { border-color: transparent; }
 .cell.full .coord { display: none; }
 .cell .cupbox { width: 100%; height: 100%; position: relative; z-index: 1; }
@@ -200,7 +240,7 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 .cell.dimmed .cupbox { opacity: .45; }
 
 /* your side: the hand */
-.hand { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 8px 10px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--line); }
+.hand { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; padding: 8px 10px; border-radius: var(--r3); background: var(--night-2); border: 1px solid var(--line); }
 .hand .slot { width: 60px; height: 60px; }
 .hand .slot.empty { border-color: #45526F; }
 .hand h3 { margin: 0 0 1px; font: 700 16px/1.2 var(--ui); }
@@ -210,10 +250,11 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 .hand .btn { min-height: 48px; }
 .hand.on { border-color: var(--jade); box-shadow: 0 0 0 1px var(--jade) inset; }
 @media (min-width: 900px) {
-  .hand { gap: 10px 14px; padding: 14px; border-radius: 18px; }
+  .result { padding: 20px; gap: 14px; }
+  .hand { gap: 10px 14px; padding: 14px; }
   .hand .slot { width: 84px; height: 84px; }
   .hand h3 { font-size: 18px; margin-bottom: 2px; }
-  .hand .desc { font-size: 14px; }
+  .hand .desc { font-size: 15px; }
   .hand .act { gap: 10px; }
   .hand .btn { min-height: 52px; }
 }
@@ -224,7 +265,7 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
   font: 400 21px/1.15 var(--hand); transform: rotate(-1.6deg); border-radius: 3px;
   background-color: var(--napkin);
   background-image: repeating-linear-gradient(45deg, rgba(120, 100, 70, .07) 0 1px, transparent 1px 9px), repeating-linear-gradient(-45deg, rgba(120, 100, 70, .07) 0 1px, transparent 1px 9px);
-  box-shadow: 0 8px 14px -8px rgba(0, 0, 0, .6);
+  box-shadow: var(--lift);
   overflow-wrap: anywhere;
 }
 .napkin small { display: block; font: 600 11px/1 var(--ui); letter-spacing: .08em; text-transform: uppercase; color: #6B6455; margin-bottom: 6px; }
@@ -236,11 +277,11 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 }
 
 /* tray of remaining cups: na mobilu 8 sloupců (až 15 hrnků na 2 řádky), ubrousek sbalený za tlačítkem */
-.tray { padding: 8px 4px; border-radius: 16px; background: var(--night-2); border: 1px solid var(--jade); display: grid; gap: 6px; }
+.tray { padding: 8px 4px; border-radius: var(--r3); background: var(--night-2); border: 1px solid var(--jade); display: grid; gap: 6px; }
 .tray h3 { margin: 0; padding: 0 8px; font: 700 16px/1.2 var(--ui); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cups { display: grid; grid-template-columns: repeat(8, minmax(44px, 1fr)); gap: 2px; }
 @media (max-width: 389px) { .cups { grid-template-columns: repeat(7, minmax(44px, 1fr)); } }
-.pick { border: 0; background: var(--night-3); border-radius: 10px; aspect-ratio: 1; padding: 4px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
+.pick { border: 0; background: var(--night-3); border-radius: var(--r1); aspect-ratio: 1; padding: 2px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
 .pick:hover { background: #2E3B5C; }
 .pick[aria-pressed="true"] { background: var(--burlap); transform: translateY(-2px); box-shadow: 0 0 0 3px var(--red), 0 8px 14px -8px rgba(0,0,0,.7); }
 .pick:disabled { cursor: default; }
@@ -253,10 +294,10 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 .napkin-toggle { min-width: 48px; min-height: 48px; padding: 0; flex: none; }
 .napkin-toggle[aria-expanded="true"], .napkin-toggle.has { background: var(--porcelain); color: var(--night); border-color: var(--porcelain); }
 @media (min-width: 900px) {
-  .tray { padding: 16px; border-radius: 18px; gap: 14px; }
+  .tray { padding: 16px; gap: 14px; }
   .tray h3 { padding: 0; font-size: 18px; white-space: normal; }
   .cups { gap: 6px; grid-template-columns: repeat(8, 1fr); }
-  .pick { border-radius: 14px; padding: 8px; }
+  .pick { border-radius: var(--r2); padding: 8px; }
   .chosen { padding: 0; min-height: 22px; font-size: 15px; }
   .napkin-field { display: grid; padding: 0; gap: 6px; }
   .tray-act { padding: 0; }
@@ -265,21 +306,42 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 }
 .pool { display: grid; gap: 6px; }
 .pool .cups { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
-.pool .pick { padding: 4px; border-radius: 10px; background: transparent; cursor: default; }
+.pool .pick { padding: 4px; border-radius: var(--r1); background: transparent; cursor: default; }
 
 /* status bits */
-.net { color: var(--red-lt); font-size: 14px; }
+.net { color: var(--text); font-size: 14px; padding: 10px 14px; border-radius: var(--r2); border: 1px solid var(--red); background: rgba(194, 58, 38, .16); }
 .wait { display: grid; gap: 12px; }
 
 /* end */
-.result { padding: 20px; border-radius: 18px; display: grid; gap: 14px; }
+.result { border-radius: var(--r3); display: grid; }
+.result { padding: 14px; gap: 10px; }
 .result .shared { font-size: 17px; font-weight: 600; }
-.ticket { position: relative; display: grid; gap: 6px; padding: 16px 18px; border-radius: 12px; background: var(--napkin); color: var(--night); }
+.result h2 { font-size: 28px; }
+.score { display: none; }
+@media (min-width: 900px) {
+  .result h2 { font-size: 40px; }
+  .result { padding: 26px; gap: 22px; }
+  .score { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 4px 0 2px; border-top: 2px dashed var(--line); border-bottom: 2px dashed var(--line); font: 800 22px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .score b { font: 900 84px/1 var(--stencil-font); letter-spacing: .02em; color: var(--text); font-variant-numeric: tabular-nums; }
+  .score .w { color: var(--jade); }
+  .chip { min-height: 46px; font-size: 26px; padding: 8px 16px 6px; }
+  .ticket { padding: 16px 22px; }
+  .ticket .res { font-size: 24px; }
+  .ticket.stamped { padding-right: 130px; min-height: 120px; }
+  .stamp { width: 92px; height: 92px; margin-top: -46px; font-size: 15px; }
+  .endacts .btn { min-height: 64px; font-size: 19px; }
+}
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.common { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; min-height: 38px; padding: 6px 12px 5px; border-radius: var(--r1); background: var(--porcelain); color: var(--night); font: 800 20px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; }
+.endacts { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; }
+.endacts .btn { padding: 0 12px; }
+.ticket { position: relative; display: grid; gap: 4px; padding: 10px 16px; border-radius: var(--r2); background: var(--napkin); color: var(--night); }
 .ticket .lbl { font: 700 12px/1 var(--ui); letter-spacing: .1em; text-transform: uppercase; color: #6B6455; }
-.ticket .res { font-size: 19px; font-weight: 700; line-height: 1.25; }
-.ticket.stamped { padding-right: 116px; }
-.ticket .ser { font-size: 14px; color: #4D5163; }
-.stamp { position: absolute; right: 10px; top: 50%; width: 92px; height: 92px; margin-top: -46px; border-radius: 50%; border: 3px solid var(--red); color: var(--red); display: grid; place-items: center; text-align: center; font: 800 15px/1 var(--stencil-font); letter-spacing: .04em; text-transform: uppercase; transform: rotate(-12deg); padding: 10px; background: rgba(243, 238, 227, .6); }
+.ticket .res { font-size: 18px; font-weight: 700; line-height: 1.25; }
+.ticket.stamped { padding-right: 96px; min-height: 80px; align-content: center; }
+.stamp { position: absolute; right: 10px; top: 50%; width: 70px; height: 70px; margin-top: -35px; border-radius: 50%; border: 3px solid var(--red); color: var(--red); display: grid; place-items: center; text-align: center; font: 800 13px/1 var(--stencil-font); letter-spacing: .04em; text-transform: uppercase; transform: rotate(-12deg); padding: 7px; background: rgba(243, 238, 227, .6); }
 .stamp.in { animation: stampin 420ms var(--ease) 700ms both; }
 @keyframes stampin { from { transform: rotate(-30deg) scale(2.2); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 1; } }
 
@@ -295,13 +357,14 @@ body[data-view="play"] main, body[data-view="end"] main { padding-bottom: 8px; }
 .recent a { display: flex; justify-content: space-between; gap: 8px; }
 .recent a span { font-weight: 500; opacity: .75; font-size: 14px; }
 
-details.rules { border-radius: 16px; border: 1px solid var(--line); background: rgba(29, 39, 64, .55); }
+details.rules { border-radius: var(--r3); border: 1px solid var(--line); background: rgba(29, 39, 64, .55); }
 details.rules summary { cursor: pointer; min-height: 48px; display: flex; align-items: center; padding: 0 16px; font-weight: 700; list-style: none; }
 details.rules summary::-webkit-details-marker { display: none; }
 details.rules summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--muted); }
 details.rules[open] summary::after { content: "–"; }
 details.rules .body { padding: 0 16px 16px; display: grid; gap: 10px; font-size: 15px; }
-details.rules ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+details.rules ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+details.rules li::marker { font: 700 15px var(--ui); color: var(--muted); }
 .legend { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 .legend div { display: flex; align-items: center; gap: 8px; font-size: 14px; }
 .legend .cupbox { width: 40px; height: 40px; flex: none; }
@@ -310,19 +373,23 @@ details.rules ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
 textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height: 1.45; }
 
 /* hand-over overlay: the main scene */
-.handover { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; background: rgba(14, 19, 32, .94); cursor: pointer; -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.handover { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; background: rgba(14, 19, 32, .985); cursor: pointer; }
+.handover .who, .handover .desc, .handover .tap { position: relative; z-index: 1; }
 .handover .who { font: 900 clamp(30px, 9vw, 48px)/.95 var(--stencil-font); text-transform: uppercase; text-align: center; letter-spacing: .02em; }
 .handover .who span { display: block; color: var(--jade); font-size: .5em; letter-spacing: .14em; margin-top: 8px; }
 .handover .big { width: min(56vw, 230px, 30dvh); aspect-ratio: 1; }
 .handover .desc { text-align: center; font-size: 16px; color: var(--muted); }
 .handover .napkin { justify-self: center; font-size: 25px; max-width: min(86vw, 360px); text-align: center; }
-.handover .tap { font-size: 13px; color: var(--muted); }
+.handover .tap { font-size: 14px; color: var(--muted); }
+.handover .cup { filter: drop-shadow(0 14px 14px rgba(0, 0, 0, .55)); }
+.ho-time { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(169, 199, 155, .18); }
+.ho-time i { display: block; height: 100%; background: var(--jade); transform-origin: left center; }
 .flycup { position: fixed; z-index: 50; pointer-events: none; will-change: transform; }
 
-.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60; background: var(--porcelain); color: var(--night); padding: 12px 18px; border-radius: 12px; font-weight: 600; font-size: 15px; box-shadow: 0 12px 24px -10px rgba(0,0,0,.7); max-width: calc(100vw - 32px); text-align: center; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 60; background: var(--porcelain); color: var(--night); padding: 12px 18px; border-radius: var(--r2); font-weight: 600; font-size: 15px; box-shadow: var(--lift-lg); max-width: calc(100vw - 32px); text-align: center; }
 
 /* nápověda „Přidat na plochu“ (kde nejde Fullscreen API, třeba iPhone Safari) */
-.hint { position: fixed; z-index: 70; left: 8px; right: 8px; top: calc(60px + env(safe-area-inset-top)); max-width: 440px; margin: 0 auto; display: flex; align-items: flex-start; gap: 8px; padding: 12px 8px 12px 16px; border-radius: 14px; background: var(--porcelain); color: var(--night); box-shadow: 0 16px 30px -12px rgba(0, 0, 0, .75); font-size: 15px; line-height: 1.4; }
+.hint { position: fixed; z-index: 70; left: 8px; right: 8px; top: calc(60px + env(safe-area-inset-top)); max-width: 440px; margin: 0 auto; display: flex; align-items: flex-start; gap: 8px; padding: 12px 8px 12px 16px; border-radius: var(--r2); background: var(--porcelain); color: var(--night); box-shadow: var(--lift-lg); font-size: 15px; line-height: 1.4; }
 .hint p { flex: 1; min-width: 0; padding-top: 2px; }
 .hint b { display: block; font: 800 20px/1.1 var(--stencil-font); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
 .hint .inl { width: 1.1em; height: 1.1em; vertical-align: -.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
@@ -335,7 +402,9 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
 @media (max-width: 599px) {
   .top { padding: 4px 8px; gap: 6px; }
   main { padding-left: 8px; padding-right: 8px; }
-  .top-meta { font-size: 12px; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .top-meta { font-size: 12px; }
+  .top-meta span { display: block; }
+  .top-meta .sk::before { content: none; }
   body:not([data-view="setup"]) .logo-t { display: none; }
   #newGameBtn { padding: 0; }
   #newGameBtn .lbl { display: none; }
@@ -343,6 +412,38 @@ textarea#msg { min-height: 150px; resize: vertical; font-size: 16px; line-height
 }
 /* spuštěno z plochy: rozehrané hry nahoře, ať se do hry dá hned vrátit */
 html.standalone #recent { order: -1; }
+
+/* telefon na šířku (nízký viewport): deska vlevo podle výšky displeje, ovládání vpravo, zásoba v hustší mřížce */
+@media (min-width: 600px) and (max-height: 520px) {
+  .game { --bs: max(200px, calc(100dvh - 164px)); grid-template-columns: calc(var(--bs) + 24px) minmax(0, 1fr); align-items: start; gap: 6px 14px; }
+  .game > .table { grid-column: 1; position: static; gap: 6px; }
+  .game > .controls { grid-column: 2; gap: 8px; }
+  .top { padding-top: 2px; padding-bottom: 2px; }
+  .side { min-height: 44px; padding: 4px 10px 4px 4px; gap: 8px; }
+  .tag { font-size: 15px; padding: 8px 10px 7px; }
+  .side .what { font-size: 13px; }
+  .side .what span { font-size: 12px; }
+  .slot { width: 34px; height: 34px; }
+  .boardsack { padding: 6px 12px; }
+  .boardsack .sack-label { padding: 2px 0 6px; font-size: 13px; }
+  .boardsack .foot { padding: 6px 2px 0; font-size: 12px; }
+  .hand { padding: 8px 10px; gap: 6px 12px; }
+  .hand .slot { width: 52px; height: 52px; }
+  .hand h3 { font-size: 16px; }
+  .hand .desc { font-size: 13px; }
+  .hand .btn { min-height: 48px; }
+  .tray { padding: 8px 6px; gap: 6px; }
+  .tray h3 { font-size: 16px; white-space: nowrap; padding: 0 6px; }
+  .cups { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 2px; }
+  .pick { border-radius: var(--r1); padding: 2px; }
+  .chosen { padding: 0 6px; font-size: 14px; min-height: 20px; }
+  .napkin-field { display: none; padding: 0 6px; }
+  .tray.napkin-open .napkin-field { display: grid; }
+  .tray-act { padding: 0 2px; }
+  .tray-act .btn { min-height: 48px; font-size: 16px; }
+  .napkin-toggle { display: inline-grid; }
+  .pool .cups { grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
@@ -365,14 +466,14 @@ html.standalone #recent { order: -1; }
   <!-- ---------- setup ---------- -->
   <section id="setup" class="narrow stack-lg" hidden>
     <div class="hero">
-      <h1>Podám ti hrnek.</h1>
+      <div class="sack herosack"><div class="sack-stripe"></div><h1>Podám ti hrnek.</h1><div class="sack-stripe"></div></div>
       <p class="lead">Quarto s kafem pro dva. Hrnek si nevybíráš, podá ti ho soupeř. Ty ho položíš a vybereš hrnek pro něj. Čtyři v řadě s něčím společným vyhrávají.</p>
     </div>
     <form id="setupForm" class="stack" autocomplete="off">
       <label class="f">Tvoje jméno<input type="text" id="nameX" maxlength="16" required placeholder="třeba Mark"></label>
       <label class="f">Koho vyzýváš<input type="text" id="nameO" maxlength="16" required placeholder="jméno soupeře"></label>
       <div class="f" role="radiogroup" aria-labelledby="starterLbl">
-        <span id="starterLbl" class="f">Kdo podává první hrnek</span>
+        <span id="starterLbl" class="f-t">Kdo podává první hrnek</span>
         <div class="seg">
           <label><input type="radio" name="starter" value="x" checked><span>Já</span></label>
           <label><input type="radio" name="starter" value="o"><span id="starterO">Soupeř</span></label>
@@ -393,7 +494,7 @@ html.standalone #recent { order: -1; }
         <input type="text" id="stakeCustom" maxlength="32" placeholder="Kdo prohraje, …" aria-label="Vlastní sázka">
         <span class="count" id="customCount">0 / 32</span>
       </div>
-      <label class="f">Vzkaz k výzvě <span class="dim" style="font-weight:500">(nepovinné)</span>
+      <label class="f"><span>Vzkaz k výzvě <span class="opt">(nepovinné)</span></span>
         <input type="text" id="setupNote" maxlength="40" placeholder="Tentokrát tě nenechám vyhrát.">
       </label>
       <span class="count" id="setupCount">0 / 40</span>
@@ -453,18 +554,19 @@ html.standalone #recent { order: -1; }
     <div class="controls">
       <div class="result panel" id="endBox" hidden>
         <h2 id="endTitle"></h2>
+        <div class="score" id="endScore" aria-hidden="true"></div>
         <p class="shared" id="endShared"></p>
+        <div class="common" id="endCommon" hidden><span class="small dim">Společné:</span><div class="chips" id="endChips"></div></div>
         <div class="ticket">
           <span class="lbl" id="tLabel">Sázka</span>
           <span class="res" id="tRes"></span>
-          <span class="ser" id="tSer"></span>
           <div class="stamp" id="tStamp" hidden></div>
         </div>
-        <div class="stack" style="gap:10px">
+        <div class="endacts">
           <button class="btn wide" id="endPrimary" type="button"></button>
           <button class="btn ghost wide" id="endSecondary" type="button"></button>
-          <p class="small dim" id="endCaption"></p>
         </div>
+        <p class="small dim" id="endCaption"></p>
       </div>
 
       <div class="hand" id="hand">
@@ -487,7 +589,7 @@ html.standalone #recent { order: -1; }
         <div class="cups" id="trayCups"></div>
         <p class="chosen" id="trayChosen" aria-live="polite"></p>
         <div class="napkin-field" id="napkinField">
-          <label class="f"><span>Napiš na ubrousek <span class="dim" style="font-weight:500">(nepovinné)</span></span>
+          <label class="f"><span>Napiš na ubrousek <span class="opt">(nepovinné)</span></span>
             <input type="text" id="napkinIn" maxlength="40" placeholder="Tenhle je s láskou.">
           </label>
           <span class="count" id="napkinCount">0 / 40</span>
@@ -520,7 +622,7 @@ html.standalone #recent { order: -1; }
   <!-- ---------- share ---------- -->
   <section id="share" class="narrow stack-lg" hidden>
     <div class="hero">
-      <h1 id="shareTitle">Stůl je prostřený.</h1>
+      <div class="sack herosack"><div class="sack-stripe"></div><h1 id="shareTitle">Stůl je prostřený.</h1><div class="sack-stripe"></div></div>
       <p class="lead" id="shareLead"></p>
     </div>
     <label class="f">Zpráva do chatu<textarea id="msg"></textarea></label>
@@ -538,6 +640,7 @@ html.standalone #recent { order: -1; }
   <p class="desc" id="hoDesc"></p>
   <div class="napkin" id="hoNapkin" hidden></div>
   <p class="tap">Klepni kamkoli</p>
+  <div class="ho-time" aria-hidden="true"><i id="hoBar"></i></div>
 </div>
 <div class="toast" id="toast" role="status" hidden></div>
 
@@ -573,6 +676,7 @@ html.standalone #recent { order: -1; }
     { on: "hranatý", off: "kulatý", allOn: "Všechny čtyři jsou hranaté.", allOff: "Všechny čtyři jsou kulaté." },
     { on: "s pěnou", off: "bez pěny", allOn: "Všechny čtyři mají pěnu.", allOff: "Ani jeden nemá pěnu." },
   ];
+  const PL = [["velké", "malé"], ["espresso", "latte"], ["hranaté", "kulaté"], ["s pěnou", "bez pěny"]];
   const cupName = id => ATTR.map((a, b) => id >> b & 1 ? a.on : a.off).join(", ");
   const cupLong = id => cupName(id).replace(/^(\S+), (\S+)/, "$1 hrnek, $2");
   const cap = t => t.charAt(0).toLocaleUpperCase("cs") + t.slice(1);
@@ -591,8 +695,9 @@ html.standalone #recent { order: -1; }
     s += shape(r, `fill="${liquid}"`);
     s += shape(r - .8, `fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1.6"`);
     if (foam) {
-      const f = r * .52;
-      s += `<g fill="var(--foam)"><circle cx="${cx}" cy="${cy}" r="${f}"/><circle cx="${cx - f * .55}" cy="${cy - f * .4}" r="${f * .62}"/><circle cx="${cx + f * .5}" cy="${cy + f * .45}" r="${f * .6}"/><circle cx="${cx + f * .5}" cy="${cy - f * .45}" r="${f * .52}"/><circle cx="${cx - f * .5}" cy="${cy + f * .5}" r="${f * .5}"/></g>`;
+      const f = r * .44;
+      const blob = `<circle cx="${cx}" cy="${cy}" r="${f}"/><circle cx="${cx - f * .55}" cy="${cy - f * .4}" r="${f * .62}"/><circle cx="${cx + f * .5}" cy="${cy + f * .45}" r="${f * .6}"/><circle cx="${cx + f * .5}" cy="${cy - f * .45}" r="${f * .52}"/><circle cx="${cx - f * .5}" cy="${cy + f * .5}" r="${f * .5}"/>`;
+      s += `<g fill="rgba(59,34,25,.42)" stroke="rgba(59,34,25,.42)" stroke-width="2.6">${blob}</g><g fill="var(--foam)">${blob}</g>`;
       s += `<path d="M0 3C-4.2 0-3.2-4.4 0-2C3.2-4.4 4.2 0 0 3Z" transform="translate(${cx} ${cy}) scale(${f / 6.5})" fill="${liquid}" opacity=".8"/>`;
       s += `<circle cx="${cx + r * .7}" cy="${cy + r * .05}" r="${r * .06}" fill="var(--foam)"/><circle cx="${cx - r * .2}" cy="${cy - r * .78}" r="${r * .045}" fill="var(--foam)"/>`;
     } else {
@@ -717,6 +822,8 @@ html.standalone #recent { order: -1; }
     <p class="small dim">Je to desková hra Quarto (Blaise Muller, 1991) s hrnky místo figurek. Pravidla podle <a href="https://en.wikipedia.org/wiki/Quarto_(board_game)" target="_blank" rel="noopener">Wikipedie</a>; varianta se čtvercem 2 × 2 se nehraje.</p>
   </div>`;
   document.querySelectorAll("[data-rules]").forEach(d => d.innerHTML = rulesHTML);
+  // na velkém displeji je pod ovládáním volné místo, pravidla s legendou vlastností tam rovnou leží otevřená
+  if (matchMedia("(min-width: 900px) and (min-height: 1000px)").matches) document.querySelector("#game [data-rules]").open = true;
 
   // ---------- pohledy ----------
   function setView(v) {
@@ -731,7 +838,11 @@ html.standalone #recent { order: -1; }
 
   function render() {
     const inGame = !!st && !!room && (view === "play" || view === "end" || view === "share");
-    $("topMeta").textContent = st && (view === "play" || view === "end" || view === "intro") ? topMeta() : "";
+    const tm = $("topMeta"); tm.textContent = "";
+    if (st && (view === "play" || view === "end" || view === "intro")) {
+      const m = topMeta();
+      [["sc", m.sc], ["sk", m.sk]].forEach(([c, t]) => { if (!t) return; const e = document.createElement("span"); e.className = c; e.textContent = t; tm.append(e); });
+    }
     $("copyTopBtn").hidden = !inGame || view === "share";
     document.title = canAct() ? "Jsi na tahu · Kafíčka" : "Kafíčka";
     if (view === "setup") renderSetup();
@@ -740,10 +851,8 @@ html.standalone #recent { order: -1; }
     if (view === "share") renderShare();
   }
   function topMeta() {
-    const s = stake(st), parts = [];
-    if (s) parts.push(s.short);
-    parts.push(`${st.x} ${st.w[0]} : ${st.w[1]} ${st.o}`);
-    return parts.join(" · ");
+    const s = stake(st), w = ended(st) ? seriesAfter(st) : st.w;
+    return { sc: `${st.x} ${w[0]} : ${w[1]} ${st.o}`, sk: s ? `Hrajeme ${s.short}` : "" };
   }
 
   function renderSetup() {
@@ -817,6 +926,9 @@ html.standalone #recent { order: -1; }
     board.classList.toggle("locked", !placing);
 
     renderSides(ph);
+    // pravidla s legendou vyplní volné místo pod výsledkem na desktopu, při hře zase ustoupí
+    const rl = document.querySelector("#game [data-rules]"), wantRules = matchMedia("(min-width: 900px) and (min-height: 1000px)").matches;
+    if (wantRules && !rl.open) { rl.open = true; rl.dataset.auto = "1"; } else if (!wantRules && rl.dataset.auto) { rl.open = false; delete rl.dataset.auto; }
     $("endBox").hidden = !isEnd;
     if (isEnd) renderEnd(win);
     $("net").textContent = net; $("net").hidden = !net;
@@ -854,6 +966,14 @@ html.standalone #recent { order: -1; }
       } else {
         $("oppWhat").textContent = "Čeká na tebe."; $("oppSub").textContent = "";
       }
+    }
+
+    if (isEnd) {   // na konci pruh ukazuje vítěze, ne „Dohráno“
+      const w = winner(st);
+      $("oppTag").textContent = w ? nameOf(st, w.p) : `${st.x} × ${st.o}`;
+      $("oppSide").classList.toggle("on", !!w);
+      $("oppWhat").textContent = w ? `Vítěz hry č. ${gameNo(st)}` : `Hra č. ${gameNo(st)} je nerozhodnutá`;
+      $("oppSub").textContent = "";
     }
 
     // bottom: your hand
@@ -915,7 +1035,7 @@ html.standalone #recent { order: -1; }
   function renderTray(name) {
     const tray = $("tray"), box = $("trayCups");
     tray.hidden = false;
-    $("trayTitle").textContent = `Který hrnek podáš: ${name}?`;
+    $("trayTitle").textContent = "Vyber hrnek, který podáš.";
     const ids = left(st);
     if (pendingCup !== null && !ids.includes(pendingCup)) pendingCup = null;
     box.textContent = "";
@@ -950,16 +1070,26 @@ html.standalone #recent { order: -1; }
   function renderEnd(win) {
     const youWon = !!win && win.p === me, s = stake(st), w = seriesAfter(st);
     const W = win ? nameOf(st, win.p) : "", L = win ? nameOf(st, other(win.p)) : "";
-    if (!win) { $("endTitle").textContent = "Remíza. Hrnky došly."; $("endShared").textContent = "Na stole je všech 16 a žádná čtveřice."; }
-    else {
+    const sc = $("endScore"); sc.textContent = "";
+    [[st.x, "x"], [`${w[0]} : ${w[1]}`, ""], [st.o, "o"]].forEach(([t, k], i) => { const e = document.createElement(i === 1 ? "b" : "span"); e.textContent = t; if (win && k && win.p === k) e.className = "w"; sc.append(e); });
+    const chips = $("endChips"); chips.textContent = "";
+    if (!win) {
+      $("endTitle").textContent = "Remíza. Hrnky došly."; $("endShared").textContent = "Na stole je všech 16 a žádná čtveřice.";
+      $("endShared").className = "shared"; $("endCommon").hidden = true;
+    } else {
       $("endTitle").textContent = youWon ? "Čtveřice! Vyhráváš." : `${W} skládá čtveřici.`;
-      $("endShared").textContent = sharedText(win);
+      $("endShared").textContent = sharedText(win); $("endShared").className = "sr-only";   // úplná věta pro čtečku, vidět jsou čipy
+      PL.forEach((pair, b) => [[1, win.on], [0, win.off]].forEach(([on, mask]) => {
+        if (!(mask >> b & 1)) return;
+        const c = document.createElement("span"); c.className = "chip";
+        c.textContent = pair[on ? 0 : 1]; chips.append(c);
+      }));
+      $("endCommon").hidden = false;
     }
     $("tLabel").textContent = s ? "Sázka" : "Výsledek";
     $("tRes").textContent = !win ? (s ? "Sázka se přesouvá do odvety." : "Nikdo nevyhrál.")
       : !me ? (s ? s.third(W, L) : `Vyhrává ${W}.`)
       : s ? (youWon ? s.win(W, L) : s.lose(W, L)) : (youWon ? "Bez sázky, jen pro radost." : `Vyhrává ${W}.`);
-    $("tSer").textContent = `série: ${st.x} ${w[0]} : ${w[1]} ${st.o} · hra č. ${gameNo(st)}`;
     const stampOn = !!(youWon && s);
     $("tStamp").hidden = !stampOn;
     $("tStamp").parentElement.classList.toggle("stamped", stampOn);
@@ -968,12 +1098,12 @@ html.standalone #recent { order: -1; }
     $("endPrimary").hidden = !me;
     $("endPrimary").disabled = busy;
     $("endCaption").textContent = "";
-    if (!me) $("endSecondary").textContent = "Zkopírovat odkaz na hru";
-    else if (!win) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Zkopírovat odkaz na hru"; }
-    else if (youWon) { $("endPrimary").textContent = `Odveta (první hrnek podává ${loser})`; $("endSecondary").textContent = "Zkopírovat odkaz na hru"; }
+    if (!me) $("endSecondary").textContent = "Kopírovat odkaz";
+    else if (!win) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; $("endCaption").textContent = `První hrnek podává ${loser}.`; }
+    else if (youWon) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; $("endCaption").textContent = `První hrnek podává ${loser}.`; }
     else {
       $("endPrimary").textContent = "Chci odvetu"; $("endSecondary").textContent = "Uznat porážku";
-      $("endCaption").textContent = `zkopíruje zprávu: „${concedeText()}“`;
+      $("endCaption").textContent = `Zkopíruje zprávu: „${concedeText()}“`;
     }
   }
   function concedeText() {
@@ -990,9 +1120,10 @@ html.standalone #recent { order: -1; }
   function renderShare() {
     const s = stake(st), them = nameOf(st, other(me || "x"));
     $("shareTitle").textContent = shareKind === "new" ? "Stůl je prostřený." : "Odkaz na hru";
-    $("shareLead").textContent = `Pošli zprávu do chatu: ${them}. Odkaz posíláš jen jednou, tahy se pak na něm objevují samy.` + (s ? ` Sázka: ${s.text}` : "");
+    $("shareLead").textContent = `Pošli zprávu do chatu soupeři (${them}). Odkaz stačí poslat jednou, tahy se na něm pak objevují samy.` + (s ? ` Sázka: ${s.text}` : "");
     const link = linkFor(), msg = $("msg");
     if (msg.dataset.link !== link) { msg.value = message(); msg.dataset.link = link; }
+    msg.style.height = "auto"; msg.style.height = Math.max(150, msg.scrollHeight + 2) + "px";
   }
 
   // ---------- animace ----------
@@ -1055,18 +1186,23 @@ html.standalone #recent { order: -1; }
       else {
         anims.push(ov.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, fill: "both" }));
         anims.push($("hoWho").animate([{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 120, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" }));
+        // podání: hrnek se přisune od soupeřovy strany stolu, lehce přejede a zhoupne se do klidu
         anims.push($("hoCup").animate([
-          { transform: "translateY(-62vh) scale(.5) rotate(-24deg)", opacity: .9 },
-          { transform: "translateY(10px) scale(1.04) rotate(3deg)", opacity: 1, offset: .72 },
+          { transform: "translateY(-64vh) scale(.46) rotate(-14deg)", opacity: .9, easing: "cubic-bezier(.3, .7, .3, 1)" },
+          { transform: "translateY(18px) scale(1.06) rotate(4deg)", opacity: 1, offset: .62, easing: "ease-in-out" },
+          { transform: "translateY(-4px) scale(.99) rotate(-1.5deg)", offset: .8, easing: "ease-in-out" },
           { transform: "none" },
-        ], { duration: 980, delay: 160, easing: "cubic-bezier(.22, 1, .36, 1)", fill: "both" }));
+        ], { duration: 1100, delay: 140, fill: "both" }));
         anims.push($("hoDesc").animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 900, fill: "both" }));
         if (note) anims.push(nap.animate([
           { opacity: 0, transform: "translateY(30px) rotate(-14deg) scale(.9)" },
           { opacity: 1, transform: "rotate(-2deg)" },
         ], { duration: 560, delay: 1050, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" }));
       }
-      buzz();
+      const hold = note ? Math.min(5600, 3100 + 60 * note.length) : 3400;   // doba po přistání hrnku: čas přečíst si vzkaz
+      if (!reduce) anims.push($("hoBar").animate([{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }], { duration: hold, easing: "linear", fill: "both" }));
+      else $("hoBar").style.transform = "scaleX(0)";
+      setTimeout(buzz, reduce ? 0 : 700);   // zabzučí při doskoku, ne při otevření
       let closed = false;
       const close = async () => {
         if (closed) return; closed = true;
@@ -1079,7 +1215,7 @@ html.standalone #recent { order: -1; }
       };
       hoDone = close;
       ov.addEventListener("click", close);
-      const timer = setTimeout(close, note ? 4200 : 2600);
+      const timer = setTimeout(close, hold);
     });
   }
   document.addEventListener("keydown", e => { if (hoDone && (e.key === "Escape" || e.key === "Enter" || e.key === " ")) { e.preventDefault(); hoDone(); } });
@@ -1411,6 +1547,7 @@ html.standalone #recent { order: -1; }
   syncFs();
 
   // ---------- start ----------
+  window.addEventListener("load", () => attempt(() => document.fonts.load('400 21px "Sedgwick Ave"', "Ačž")));   // ubrousek ve scéně podání se nesmí překreslit záložním písmem
   function info(title, meta, retry) {
     $("infoTitle").textContent = title;
     $("infoMeta").textContent = meta; $("infoMeta").hidden = !meta;

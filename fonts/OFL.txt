@@ -1,0 +1,5 @@
+Písma ve složce fonts/ jsou uvolněna pod licencí SIL Open Font License 1.1 (https://openfontlicense.org):
+  Big Shoulders Stencil (Patric King, Chicago Digital Media Design Group), Schibsted Grotesk (Schibsted Media Group), Sedgwick Ave (Kevin Burke).
+Zdroj: Google Fonts (https://fonts.google.com). Soubory Big Shoulders Stencil a Schibsted Grotesk jsou statické řezy (wght 700/800/900 a 400/500/600/700)
+vytvořené z proměnných originálů nástrojem fontTools instancer, podmnožiny latin a latin-ext; Sedgwick Ave beze změny.
+Licenci písem je dovoleno šířit s aplikací, písma se samostatně neprodávají.
