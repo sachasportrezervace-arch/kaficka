@@ -535,6 +535,15 @@ html.standalone #recent { order: -1; }
   .unlock .s { font-size: 15px; }
 }
 
+/* ---------- sólo: trénink proti botovi ---------- */
+/* „Zkusit sám“ stojí pod hlavním tlačítkem a je úmyslně tišší: bez výplně, vedlejší pruh pod ním říká, co sólo je */
+.solo-box { display: grid; justify-items: center; gap: 6px; padding-top: 2px; text-align: center; }
+.btn.quiet { background: transparent; color: var(--muted); border: 1px solid var(--line); box-shadow: none; min-height: 48px; padding: 0 22px; font-size: 16px; font-weight: 600; }
+.btn.quiet:hover { background: var(--night-2); color: var(--text); border-color: var(--edge); }
+.solo-box .count { text-align: center; font-size: 13px; font-variant-numeric: normal; }   /* tabulární číslice by rozšířily čárku a tečku */
+/* bot ubrousky nečte, tak je ve sólu schované pole i tlačítko */
+body[data-solo] .napkin-field, body[data-solo] .napkin-toggle { display: none !important; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
@@ -589,6 +598,10 @@ html.standalone #recent { order: -1; }
       </label>
       <span class="count" id="setupCount">0 / 40</span>
       <button class="btn wide" id="setupSubmit" type="submit">Založit hru</button>
+      <div class="solo-box">
+        <button class="btn quiet" id="soloBtn" type="button">Zkusit sám</button>
+        <span class="count">Proti botovi, bez odkazu a bez zápisu do série.</span>
+      </div>
     </form>
     <div id="recent" class="stack recent" hidden>
       <h2 style="font-size:22px">Rozehrané na tomhle telefonu</h2>
@@ -935,6 +948,9 @@ html.standalone #recent { order: -1; }
   let st = null, room = null, me = null, view = "setup", busy = false, net = "", bootSeq = 0;
   let pendingCell = null, pendingCup = null, shareKind = "new";
   let animating = false;
+  // sólo (trénink proti botovi): čistě lokální stav; solo = {name, games, next} nebo null. Nic se nesynchronizuje ani neukládá.
+  let solo = null, botT = null;
+  const BOT = "o", BOT_NAME = "Kafebot";
   const turn = () => st ? phase(st) : null;
   const freeSeat = () => !room ? null : !room.sx ? "x" : !room.so ? "o" : null;
   const canAct = () => !!st && !!room && !!me && !busy && !animating && turn().kind !== "end" && turn().who === me;
@@ -977,6 +993,7 @@ html.standalone #recent { order: -1; }
   function setView(v) {
     view = v;
     document.body.dataset.view = v;
+    if (solo) document.body.dataset.solo = "1"; else delete document.body.dataset.solo;
     for (const id of ["setup", "info", "intro", "game", "share"]) $(id).hidden = id !== (v === "play" || v === "end" ? "game" : v);
     $("newGameBtn").hidden = v === "setup";
     render();
@@ -985,7 +1002,7 @@ html.standalone #recent { order: -1; }
   const show = v => view === v ? render() : setView(v);
 
   function render() {
-    const inGame = !!st && !!room && (view === "play" || view === "end" || view === "share");
+    const inGame = !!st && !!room && !solo && (view === "play" || view === "end" || view === "share");
     const tm = $("topMeta"); tm.textContent = "";
     if (st && (view === "play" || view === "end" || view === "intro")) {
       const m = topMeta();
@@ -997,8 +1014,10 @@ html.standalone #recent { order: -1; }
     if (view === "intro") renderIntro();
     if (view === "play" || view === "end") renderGame();
     if (view === "share") renderShare();
+    if (solo) soloKick();
   }
   function topMeta() {
+    if (solo) return { sc: "Trénink", sk: "proti botovi" };
     const s = stake(st), w = ended(st) ? seriesAfter(st) : st.w;
     return { sc: `${st.x} ${w[0]} : ${w[1]} ${st.o}`, sk: s ? `Hrajeme ${s.short}` : "" };
   }
@@ -1089,9 +1108,9 @@ html.standalone #recent { order: -1; }
     const ph = turn(), isEnd = ph.kind === "end", win = winner(st), mine = canAct();
     const g = grid(st);
     // sack labels: jména s tituly nahoře, hra a menu dne dole
-    const W = isEnd ? seriesAfter(st) : st.w;
+    const W = isEnd && !solo ? seriesAfter(st) : st.w;   // ve sólu se výhry nepočítají, titul ani podšálek nevznikne
     renderNames(W);
-    $("sackLeft").textContent = `Hra č. ${gameNo(st)} · ${MENUS[st.m].name}`;
+    $("sackLeft").textContent = `${solo ? "Partie" : "Hra č."} ${gameNo(st)} · ${MENUS[st.m].name}`;
     $("sackRight").textContent = `${st.p.length} / 16`;
     const hrn = document.createElement("span"); hrn.className = "d"; hrn.textContent = " hrnků"; $("sackRight").append(hrn);
 
@@ -1162,7 +1181,7 @@ html.standalone #recent { order: -1; }
       else if (seatFree) { $("oppWhat").textContent = "Ještě nesedí u stolu."; $("oppSub").textContent = "Odkaz zatím nikdo neotevřel."; }
       else if (ph.who === o && ph.kind === "pick") {
         $("oppSide").classList.add("on"); steam.toggleAttribute("hidden", false);
-        $("oppWhat").textContent = "Vybírá hrnek pro tebe…"; $("oppSub").textContent = "objeví se tu sám";
+        $("oppWhat").textContent = "Vybírá hrnek pro tebe…"; $("oppSub").textContent = solo ? "" : "objeví se tu sám";
       } else if (ph.who === o && ph.kind === "place") {
         $("oppSide").classList.add("on");
         oppSlot.hidden = false; oppSlot.className = "slot"; oppSlot.innerHTML = cupBox(ph.cup);
@@ -1176,7 +1195,7 @@ html.standalone #recent { order: -1; }
       const w = winner(st);
       $("oppTag").textContent = w ? nameOf(st, w.p) : `${st.x} × ${st.o}`;
       $("oppSide").classList.toggle("on", !!w);
-      $("oppWhat").textContent = w ? `Vítěz hry č. ${gameNo(st)}` : `Hra č. ${gameNo(st)} je nerozhodnutá`;
+      $("oppWhat").textContent = solo ? (w ? "Vítěz partie" : "Partie je nerozhodnutá") : w ? `Vítěz hry č. ${gameNo(st)}` : `Hra č. ${gameNo(st)} je nerozhodnutá`;
       $("oppSub").textContent = "";
     }
 
@@ -1219,11 +1238,12 @@ html.standalone #recent { order: -1; }
         if (n) { $("handNoteWho").textContent = "Tvůj ubrousek"; $("handNote").textContent = n; }
       } else {
         const back = st.r && st.r[1] === st.q.length;   // hrnek jsem vrátil cukrem, soupeř vybírá jiný
+        const later = solo ? "" : " Stránku můžeš zavřít, hra počká.";   // ve sólu nic nečeká na síť
         $("handTitle").textContent = freeSeat() === o ? "Čekáš na soupeře." : back ? "Hrnek vracíš." : "Ruce volné.";
         $("handDesc").textContent = freeSeat() === o
           ? "Pošli odkaz do chatu. Jakmile ho soupeř otevře a přijme výzvu, uvidíš to tady."
-          : back ? `${name} vybírá jiný hrnek. Stránku můžeš zavřít, hra počká.`
-          : `${name} vybírá, který hrnek ti podá. Stránku můžeš zavřít, hra počká.`;
+          : back ? `${name} vybírá jiný hrnek.${later}`
+          : `${name} vybírá, který hrnek ti podá.${later}`;
       }
     }
 
@@ -1281,9 +1301,9 @@ html.standalone #recent { order: -1; }
   });
 
   function renderEnd(win) {
-    const youWon = !!win && win.p === me, s = stake(st), w = seriesAfter(st);
+    const youWon = !!win && win.p === me, s = stake(st), w = solo ? st.w : seriesAfter(st);   // sólo: série zůstává 0 : 0
     const W = win ? nameOf(st, win.p) : "", L = win ? nameOf(st, other(win.p)) : "";
-    const sc = $("endScore"); sc.textContent = "";
+    const sc = $("endScore"); sc.textContent = ""; sc.hidden = !!solo;
     [[st.x, "x"], [`${w[0]} : ${w[1]}`, ""], [st.o, "o"]].forEach(([t, k], i) => { const e = document.createElement(i === 1 ? "b" : "span"); e.textContent = t; if (win && k && win.p === k) e.className = "w"; sc.append(e); });
     const chips = $("endChips"); chips.textContent = "";
     if (!win) {
@@ -1305,8 +1325,9 @@ html.standalone #recent { order: -1; }
       const lc = document.createElement("span"); lc.className = "linechip"; lc.textContent = LINE_NAME[win.ln.t];
       $("endCommon").prepend(lc);
     }
-    $("tLabel").textContent = s ? "Sázka" : "Výsledek";
-    $("tRes").textContent = !win ? (s ? "Sázka se přesouvá do odvety." : "Nikdo nevyhrál.")
+    $("tLabel").textContent = solo ? "Trénink" : s ? "Sázka" : "Výsledek";
+    $("tRes").textContent = solo ? "Do série se tahle partie nepočítá."
+      : !win ? (s ? "Sázka se přesouvá do odvety." : "Nikdo nevyhrál.")
       : !me ? (s ? s.third(W, L) : `Vyhrává ${W}.`)
       : s ? (youWon ? s.win(W, L) : s.lose(W, L)) : (youWon ? "Bez sázky, jen pro radost." : `Vyhrává ${W}.`);
     const stampOn = !!(youWon && s);
@@ -1317,8 +1338,10 @@ html.standalone #recent { order: -1; }
     $("endPrimary").hidden = !me;
     $("endPrimary").disabled = busy;
     // příští partie: menu dne, kdo začíná a kdo dostává kostku cukru
-    const nm = MENUS[menuFor(room.id, gameNo(st) + 1)].name;
-    $("endNext").textContent = win ? `Příští partie: ${nm}. ${loser} podává první hrnek a dostává kostku cukru.` : `Příští partie: ${nm}. První hrnek podává ${loser}.`;
+    const nm = MENUS[solo ? solo.next : menuFor(room.id, gameNo(st) + 1)].name;
+    const starter = win ? other(win.p) : other(st.s);
+    if (solo) $("endNext").textContent = `Příští partie: ${nm}. ` + (starter === me ? "První hrnek podáváš ty" : `První hrnek podává ${nameOf(st, starter)}`) + (win && win.p === BOT ? " a dostáváš kostku cukru." : ".");
+    else $("endNext").textContent = win ?`Příští partie: ${nm}. ${loser} podává první hrnek a dostává kostku cukru.` : `Příští partie: ${nm}. První hrnek podává ${loser}.`;
     // nový titul a podšálek: ukáže se jednou, v partii, kterou hráč dohrál výhrou přes hranici titulu
     const wi = win ? (win.p === "x" ? 0 : 1) : -1, rBefore = wi >= 0 ? rankOf(st.w[wi]) : 0, rAfter = wi >= 0 ? rankOf(w[wi]) : 0;
     $("unlock").hidden = !(rAfter > rBefore);
@@ -1329,7 +1352,8 @@ html.standalone #recent { order: -1; }
       $("unlockS").textContent = `Nový podšálek: ${RANKS[rAfter - 1].sau}.`;
     }
     $("endCaption").textContent = "";
-    if (!me) $("endSecondary").textContent = "Kopírovat odkaz";
+    if (solo) { $("endPrimary").textContent = "Znovu"; $("endSecondary").textContent = "Vyzvat soupeře"; }
+    else if (!me) $("endSecondary").textContent = "Kopírovat odkaz";
     else if (!win || youWon) { $("endPrimary").textContent = "Odveta"; $("endSecondary").textContent = "Kopírovat odkaz"; }
     else {
       $("endPrimary").textContent = "Chci odvetu"; $("endSecondary").textContent = "Uznat porážku";
@@ -1463,7 +1487,7 @@ html.standalone #recent { order: -1; }
   }
 
   // Co se změnilo od posledního pohledu → přehrát jako scénu (soupeřovo položení, pak podání).
-  async function playChanges(prev) {
+  async function playChanges(prev, fromRect) {
     const s = st;
     const placed = s.p.length === prev.p.length + 1 && s.p.length <= s.q.length;
     const handed = s.q.length === prev.q.length + 1;
@@ -1471,10 +1495,12 @@ html.standalone #recent { order: -1; }
     try {
       if (placed && !calm()) {
         const cell = s.p[s.p.length - 1];
-        await fly(s.q[s.p.length - 1], $("oppSide").getBoundingClientRect(), cellEl(cell), { rot: -10, lift: 20, ms: 700 });
+        await fly(s.q[s.p.length - 1], fromRect || $("oppSide").getBoundingClientRect(), cellEl(cell), { rot: -10, lift: 20, ms: 700 });
       }
       if (ended(s)) { popWin(); return; }
-      if (handed) await maybeHandover();
+      // sólo: bez celoobrazovkové scény, hrnek od bota jen přeletí z pruhu soupeře do ruky
+      if (handed && solo) await fly(s.q[s.q.length - 1], fromRect || $("oppSide").getBoundingClientRect(), $("handSlot").querySelector(".cupbox"), { ms: 620 });
+      else if (handed) await maybeHandover();
     } finally { animating = false; render(); }
   }
   function popWin() {
@@ -1486,6 +1512,11 @@ html.standalone #recent { order: -1; }
 
   // ---------- zápis do místnosti ----------
   async function commit(next, ok, conflictText) {
+    if (solo) {   // sólo: žádná síť, stav se jen přepíše na místě
+      if (!ok(st)) { pendingCell = null; render(); return false; }
+      st = next; lastChange = Date.now();
+      return true;
+    }
     busy = true; pollSeq++; render();
     let d;
     try { d = await loadDoc(room.id); }
@@ -1533,7 +1564,7 @@ html.standalone #recent { order: -1; }
   function schedule(ms) { clearTimeout(pollT); pollT = setTimeout(poll, ms); }
   async function poll() {
     clearTimeout(pollT);
-    if (!room || room.v < 0 || document.hidden) return;
+    if (solo || !room || room.v < 0 || document.hidden) return;
     if (busy || animating) { schedule(1500); return; }
     const id = room.id, seq = ++pollSeq;
     try {
@@ -1621,7 +1652,7 @@ html.standalone #recent { order: -1; }
       ghost.remove(); animating = false;
     }
     show("play");
-    toast(`Podáno. ${nameOf(st, opp())} teď pokládá.`);
+    if (!solo) toast(`Podáno. ${nameOf(st, opp())} teď pokládá.`);
   }
 
   // Kostka cukru: placeč vrátí hrnek, který mu soupeř právě podal; soupeř musí podat jiný (vrácený hrnek se v tom tahu nedá vybrat).
@@ -1651,6 +1682,7 @@ html.standalone #recent { order: -1; }
   }
 
   async function rematch() {
+    if (solo) return soloDeal(st);
     if (busy || !me) return;
     const win = winner(st), gn = gameNo(st) + 1;
     // odvetu začíná poražený a dostává kostku cukru; po remíze ji nemá nikdo
@@ -1662,6 +1694,7 @@ html.standalone #recent { order: -1; }
   }
   $("endPrimary").addEventListener("click", rematch);
   $("endSecondary").addEventListener("click", () => {
+    if (solo) { toSetup(); return; }   // Vyzvat soupeře: normální setup, ze sóla nic nepřechází
     const win = winner(st);
     if (me && win && win.p !== me) copy(concedeText(), "Zkopírováno, vlož to do chatu");
     else copyLink();
@@ -1717,7 +1750,7 @@ html.standalone #recent { order: -1; }
   // ---------- rozehrané hry na tomhle zařízení ----------
   function recentRooms() { return attempt(() => JSON.parse(store.get("kaf-rooms") || "[]"), []).filter(r => r && /^[0-9a-z]{6,24}$/.test(r.id)); }
   function remember() {
-    if (!room || !st) return;
+    if (solo || !room || !st) return;
     const list = recentRooms().filter(r => r.id !== room.id);
     list.unshift({ id: room.id, x: st.x, o: st.o, me });
     store.set("kaf-rooms", JSON.stringify(list.slice(0, 5)));
@@ -1749,13 +1782,79 @@ html.standalone #recent { order: -1; }
     if (!$("nameX").value) $("nameX").value = store.get("kaf-name") || "";
     syncCustom(); setView("setup");
   }
-  $("newGameBtn").addEventListener("click", () => {
-    clearTimeout(pollT); bootSeq++;
-    room = null; me = null; st = null; busy = false; pendingCell = null; pendingCup = null; net = "";
+  function toSetup() {
+    clearTimeout(pollT); stopBot(); bootSeq++;
+    solo = null; room = null; me = null; st = null; busy = false; pendingCell = null; pendingCup = null; net = "";
     history.pushState(null, "", location.pathname + location.search);
     showSetup();
-  });
-  $("infoNew").addEventListener("click", () => $("newGameBtn").click());
+  }
+  $("newGameBtn").addEventListener("click", toSetup);
+  $("infoNew").addEventListener("click", toSetup);
+
+  // ---------- sólo: trénink proti botovi ----------
+  // Žádný zápis ani čtení z mantledb, žádná místnost ani odkaz, nic do localStorage (kaf-r-*, seznam her), nic do série, titulů a podšálků.
+  // Člověk je "x", bot "o". Stav je obyčejné `st` s `room` naoko (id "solo"), takže pokládání, podávání i kostka cukru jedou stejným kódem
+  // jako v ostré hře; commit() ve sólu jen přepíše lokální stav a render() po každém tahu naplánuje bota.
+  const rnd = n => Math.floor(Math.random() * n);
+  const soloMenu = prev => { const pool = [0, 1, 2, 3].filter(m => m !== prev); return pool[rnd(pool.length)]; };   // v sólu se losují všechna čtyři menu, dvě po sobě nikdy stejné
+  function stopBot() { clearTimeout(botT); botT = null; }
+  function soloStart(name) {
+    stopBot();
+    solo = { name: (name || "").trim().slice(0, 16) || "Ty", games: 0, next: soloMenu(-1) };
+    room = { id: "solo", v: 0, sx: "solo", so: "solo" };
+    me = "x";
+    soloDeal(null);
+  }
+  // Nová partie. První: podává bot, člověk hned pokládá. Další jako odveta: začíná poražený, a když prohrál člověk, dostane kostku cukru.
+  function soloDeal(prev) {
+    stopBot();
+    const win = prev && winner(prev), m = solo.next;
+    solo.next = soloMenu(m);
+    st = { x: solo.name, o: BOT_NAME, s: !prev ? BOT : win ? other(win.p) : other(prev.s), q: [], p: [], t: null, k: "", kc: "", c: "", n: null, w: [0, 0],
+      gn: ++solo.games, m, sg: win && win.p === BOT ? "x" : "", r: null };
+    pendingCell = null; pendingCup = null; $("napkinIn").value = ""; $("tray").classList.remove("napkin-open");
+    lastChange = Date.now();
+    setView("play");
+  }
+  // Bot je záměrně jednoduchý. Pokládání: vezme výherní místo, jinak náhodné. Podávání: vyhne se hrnku, se kterým by člověk hned vyhrál,
+  // ale asi v pětině tahů podá náhodný. Pravidla bere z winner() a z menu dne, takže platí pro všechna čtyři menu.
+  function soloKick() {
+    if (!solo || view !== "play" || !st || botT || animating || busy) return;
+    const ph = turn();
+    if (ph.kind === "end" || ph.who !== BOT) return;
+    const sess = solo;
+    botT = setTimeout(() => { botT = null; if (solo === sess && view === "play") botMove(); }, calm() ? 260 + rnd(140) : 600 + rnd(300));
+  }
+  const freeCells = s => { const g = grid(s); return g.map((v, i) => v === null ? i : -1).filter(i => i >= 0); };
+  function botCell() {
+    const free = freeCells(st);
+    for (const c of free) { const t = clone(st); t.p.push(c); const w = winner(t); if (w && w.p === BOT) return c; }
+    return free[rnd(free.length)];
+  }
+  function humanWins(id) {
+    const t = clone(st); t.q.push(id);
+    return freeCells(t).some(c => { const u = clone(t); u.p.push(c); const w = winner(u); return !!w && w.p !== BOT; });
+  }
+  function botCup() {
+    const back = st.r && st.r[1] === st.q.length ? st.r[0] : -1;   // hrnek, který člověk vrátil cukrem, se nesmí podat znovu
+    const all = left(st).filter(id => id !== back);
+    if (Math.random() < .2) return all[rnd(all.length)];
+    const safe = all.filter(id => !humanWins(id));
+    const pool = safe.length ? safe : all;
+    return pool[rnd(pool.length)];
+  }
+  async function botMove() {
+    const ph = turn();
+    if (!solo || ph.kind === "end" || ph.who !== BOT || animating) return;
+    const prev = st, next = clone(st), from = $("oppSide").getBoundingClientRect();
+    next.t = null;
+    if (ph.kind === "place") next.p.push(botCell()); else { next.q.push(botCup()); next.n = null; }
+    pendingCell = null; st = next; lastChange = Date.now();
+    animating = true;   // už při vykreslení jsou tlačítka zamčená, ať klepnutí během letu hrnku neskončí naprázdno
+    show(ended(st) ? "end" : "play");
+    await playChanges(prev, from);
+  }
+  $("soloBtn").addEventListener("click", () => { if (location.hash === "#solo") boot(); else location.hash = "solo"; });
   $("infoRetry").addEventListener("click", boot);
   $("setupForm").addEventListener("submit", ev => {
     ev.preventDefault();
@@ -1835,9 +1934,10 @@ html.standalone #recent { order: -1; }
   }
   function boot() {
     const seq = ++bootSeq;
-    clearTimeout(pollT);
+    clearTimeout(pollT); stopBot(); solo = null;
     room = null; me = null; busy = false; pendingCell = null; pendingCup = null; net = ""; fails = 0;
     const h = (location.hash || "").replace(/^#/, "");
+    if (h === "solo") { soloStart($("nameX").value.trim() || store.get("kaf-name") || ""); return; }
     const r = /^r\.([0-9a-z]{6,24})$/.exec(h);
     if (r) { openRoom(r[1], seq); return; }
     st = null; showSetup();
