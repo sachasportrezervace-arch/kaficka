@@ -939,7 +939,8 @@ html.standalone #recent { order: -1; }
   const freeSeat = () => !room ? null : !room.sx ? "x" : !room.so ? "o" : null;
   const canAct = () => !!st && !!room && !!me && !busy && !animating && turn().kind !== "end" && turn().who === me;
   const opp = () => me ? other(me) : null;
-  const buzz = () => { try { navigator.vibrate && navigator.vibrate(12); } catch {} };
+  // bez klepnutí na stránku prohlížeč vibraci blokuje a hlásí chybu do konzole (scéna podání přijde ze synchronizace)
+  const buzz = () => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(12); } catch {} };
   function ago(t) {
     if (!t) return "";
     const min = Math.max(0, Math.round(Date.now() / 60000 - t));
