@@ -43,7 +43,7 @@
   --burlap: #B8935F; --burlap-dk: #9A774A; --stencil: #1E2A4A;
   --red: #C23A26; --red-dk: #A32E1C; --red-lt: #F0806B;
   --jade: #A9C79B;
-  --porcelain: #F7F3EA; --espresso: #3B2219; --latte: #C9965F; --foam: #FBF6EC;
+  --porcelain: #F7F3EA; --espresso: #3B2219; --latte: #DDBA88; --foam: #FBF6EC;
   --napkin: #F3EEE3; --marker: #22305A;
   --stencil-font: "Big Shoulders Stencil", "Arial Narrow", sans-serif;
   --ui: "Schibsted Grotesk", system-ui, sans-serif;
@@ -188,6 +188,7 @@ body[data-view="end"] .game { --rest: 428px; }
 .side { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 4px 10px 4px 4px; border-radius: var(--r2); background: var(--night-2); border: 1px solid var(--line); }
 .tag { flex: none; font: 800 15px/1 var(--stencil-font); letter-spacing: .06em; text-transform: uppercase; padding: 8px 10px 7px; border-radius: var(--r1); background: var(--porcelain); color: var(--night); max-width: 8em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side.on .tag { background: var(--jade); }
+.side.idle .tag { display: none; }   /* na tahu jsi ty: pruh mluví o tobě, jmenovka soupeře by táhla oko ke špatnému jménu */
 .side .what { flex: 1; min-width: 0; font-size: 13px; line-height: 1.25; }
 .side .what b { display: block; font-weight: 700; }
 .side .what span { color: var(--muted); font-size: 12px; }
@@ -237,6 +238,8 @@ body[data-view="end"] .game { --rest: 428px; }
 .cell.last::after { content: ""; position: absolute; inset: 2%; border-radius: 50%; border: 2px solid rgba(30, 42, 74, .55); }
 .cell.win::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 4px solid var(--red); box-shadow: 0 0 0 3px rgba(247, 243, 234, .5); }
 .cell.win.pop::after { animation: ring 520ms var(--ease) both; animation-delay: var(--d, 0ms); }
+.cell.win.pop .cupbox { animation: hop 520ms var(--ease) both; animation-delay: calc(var(--d, 0ms) + 120ms); }
+@keyframes hop { 0% { transform: none; } 38% { transform: translateY(-9%) scale(1.14) rotate(-4deg); } 70% { transform: translateY(2%) scale(.97); } 100% { transform: none; } }
 @keyframes ring { from { transform: scale(1.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 .cell.dimmed .cupbox { opacity: .45; }
 
@@ -282,6 +285,7 @@ body[data-view="end"] .game { --rest: 428px; }
 .tray h3 { margin: 0; padding: 0 8px; font: 700 16px/1.2 var(--ui); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cups { display: grid; grid-template-columns: repeat(8, minmax(44px, 1fr)); gap: 2px; }
 @media (max-width: 389px) { .cups { grid-template-columns: repeat(7, minmax(44px, 1fr)); } }
+@media (max-width: 359px) { .cups { grid-template-columns: repeat(6, minmax(44px, 1fr)); } }   /* 320 px (iPhone SE 1. gen.): 7 sloupců by stránku roztáhlo do šířky */
 .pick { border: 0; background: var(--night-3); border-radius: var(--r1); aspect-ratio: 1; padding: 2px; cursor: pointer; transition: transform 200ms var(--ease), background-color 160ms, box-shadow 160ms; }
 .pick:hover { background: #2E3B5C; }
 .pick[aria-pressed="true"] { background: var(--burlap); transform: translateY(-2px); box-shadow: 0 0 0 3px var(--red), 0 8px 14px -8px rgba(0,0,0,.7); }
@@ -536,6 +540,49 @@ html.standalone #recent { order: -1; }
   .unlock .s { font-size: 15px; }
 }
 
+/* ---------- kolo 1. 11.: tah na pytli, podání rukou, ukázka menu, výherní chvilka ---------- */
+/* kdo je na tahu: jméno na pytli podtrhne červená fixa, druhé jméno ustoupí */
+.sack-names .nm { position: relative; z-index: 1; padding-bottom: 1px; margin-bottom: -1px; background: linear-gradient(var(--red), var(--red)) left bottom / 0 3px no-repeat; }
+.sack-names .pn.turn .nm { background-size: 100% 3px; }
+.sack-names .pn.idle { opacity: .55; }
+.sack-names .pn.o .nm { background-position: right bottom; }
+@media (prefers-reduced-motion: no-preference) {
+  .sack-names .pn.turn.draw .nm { animation: penline 420ms var(--ease) 120ms both; }
+  .sack-names .pn { transition: opacity 260ms; }
+}
+@keyframes penline { from { background-size: 0 3px; } to { background-size: 100% 3px; } }
+/* piktogram menu dne v patičce pytle: tečky 4 × 4 a tvar, který navíc vyhrává */
+.boardsack .foot #sackLeft { display: inline-flex; align-items: center; gap: 6px; }
+.mpic { flex: none; width: 16px; height: 16px; margin: -3px 0; overflow: visible; }
+.mpic circle { fill: currentColor; opacity: .45; }
+.mpic circle.on { opacity: 1; }
+.mpic path { fill: none; stroke: var(--red); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+@media (min-width: 900px) { .mpic { width: 19px; height: 19px; } }
+/* ukázka menu dne na začátku partie: červený tvar se dvakrát ukáže na prázdné jutě a zmizí */
+.marks.demo { z-index: 2; opacity: 0; }
+.marks.demo .dot { fill: var(--red); stroke: none; }
+.board.demoing .coord { opacity: .25; transition: opacity 300ms; }
+/* scéna podání: ruka přisune hrnek na podšálku od soupeřovy strany stolu a odtáhne se */
+/* hrnek s rukou je nahoře (ruka přijíždí od horního okraje, soupeřovy strany stolu), jméno a vlastnosti pod ním */
+.handover .ho-stage { order: 1; margin-bottom: 4px; } .handover .who { order: 2; } .handover .desc { order: 3; } .handover .napkin { order: 4; } .handover .tap { order: 5; }
+.ho-stage { position: relative; width: min(56vw, 230px, 30dvh); aspect-ratio: 1; }
+.handover .big { width: 100%; position: relative; z-index: 1; }
+.handover .big .saucer, .handover .big .cup { position: absolute; inset: 0; width: 100%; height: 100%; }
+.handover .big .saucer { overflow: visible; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .5)); }
+.ho-arm { position: absolute; z-index: 2; left: 33%; width: 24%; bottom: 84%; height: 100vh; display: flex; flex-direction: column; pointer-events: none; }
+.ho-arm .sleeve { flex: 1; background: var(--red); border-radius: 0 0 6px 6px; box-shadow: inset -6px 0 0 rgba(0, 0, 0, .14); }
+.ho-arm svg { display: block; width: 100%; height: auto; margin-top: -2px; }
+.handover .desc.ho-attrs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 340px; }
+.ho-attrs .chip { min-height: 30px; font-size: 16px; padding: 5px 9px 4px; }
+@media (prefers-reduced-motion: reduce) { .ho-arm { display: none; } }
+/* výherní chvilka: zrnka vyletí z posledního hrnku, poražený má u jména politý pytel */
+.bean { position: fixed; z-index: 45; width: 14px; height: 18px; pointer-events: none; will-change: transform; }
+.sack-names .nl { position: relative; }
+.spill { flex: none; width: 34px; height: 22px; margin: -6px 0; overflow: visible; pointer-events: none; }
+@media (min-width: 900px) { .spill { width: 44px; height: 28px; margin: -8px 0; } }
+@media (prefers-reduced-motion: no-preference) { .spill.fresh { animation: plop 560ms var(--ease) 820ms both; transform-origin: 40% 60%; } }
+@keyframes plop { 0% { transform: scale(.1, .3); opacity: 0; } 55% { transform: scale(1.12, 1.2); opacity: 1; } 100% { transform: none; opacity: 1; } }
+
 /* ---------- sólo: trénink proti botovi ---------- */
 /* „Zkusit sám“ stojí pod hlavním tlačítkem a je úmyslně tišší: bez výplně, vedlejší pruh pod ním říká, co sólo je */
 .solo-box { display: grid; justify-items: center; gap: 6px; padding-top: 2px; text-align: center; }
@@ -758,8 +805,11 @@ body[data-herna] .logo { pointer-events: none; }
 
 <div class="handover" id="handover" hidden tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="hoWho">
   <p class="who" id="hoWho"></p>
-  <div class="big" id="hoCup"></div>
-  <p class="desc" id="hoDesc"></p>
+  <div class="ho-stage" id="hoStage">
+    <div class="ho-arm" id="hoArm" aria-hidden="true"><div class="sleeve"></div><svg viewBox="0 0 40 46"><rect x="-1" y="0" width="42" height="9" rx="3" fill="#F7F3EA"/><path d="M7 8H33V35a3.3 3.3 0 0 1-6.6 0V30V38a3.3 3.3 0 0 1-6.6 0V30V38a3.3 3.3 0 0 1-6.6 0V30V35a3.3 3.3 0 0 1-6.6 0V27C2 27 .5 21 2.5 18.5 4 16.6 6 18 7 20Z" fill="#F7F3EA" stroke="#1E2A4A" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 14.5c2.5 1 5.5 1 8 0" fill="none" stroke="#1E2A4A" stroke-width="1.3" stroke-linecap="round" opacity=".3"/></svg></div>
+    <div class="big" id="hoCup"></div>
+  </div>
+  <p class="desc ho-attrs" id="hoDesc"></p>
   <div class="napkin" id="hoNapkin" hidden></div>
   <p class="tap">Klepni kamkoli</p>
   <div class="ho-time" aria-hidden="true"><i id="hoBar"></i></div>
@@ -1094,14 +1144,24 @@ body[data-herna] .logo { pointer-events: none; }
 
   const cubeSVG = label => `<svg class="cube" viewBox="0 0 24 24" role="img" aria-label="${label}"><title>${label}</title><path d="M12 3l8 4.2-8 4.2-8-4.2z" fill="#FBF6EC"/><path d="M4 7.2l8 4.2V21l-8-4.2z" fill="#E4DCCB"/><path d="M20 7.2l-8 4.2V21l8-4.2z" fill="#CBBFA8"/><path d="M12 3l8 4.2v9.6L12 21l-8-4.2V7.2z" fill="none" stroke="#1E2A4A" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
   // Horní okraj pytle: jména, tituly a kostka cukru u toho, kdo ji má
-  function renderNames(W) {
+  // politý pytel u jména poraženého: kaňka kafe, jako by mu při čtveřici soupeře vyklouzl hrnek
+  const SPILL = `<svg class="spill" viewBox="0 0 44 28" aria-hidden="true"><path d="M7 15c-3-5 2-10 9-9 4-4 12-4 15 0 6-1 10 4 8 8 4 3 1 9-5 8-3 4-11 5-15 2-5 3-12 1-12-3-3-1-3-4 0-6z" fill="#4E2B1B"/><circle cx="41.5" cy="4" r="1.8" fill="#4E2B1B"/><circle cx="3" cy="25" r="1.3" fill="#4E2B1B"/><circle cx="22" cy="14.5" r="7.2" fill="none" stroke="#7A4A31" stroke-width="1.6" stroke-dasharray="30 6"/><path d="M12 10.5c2.4-2 5.6-2.5 8-1.6" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+  let turnKey = "", spillKey = "";
+  // turn = kdo je na tahu ("" = nikdo, třeba na konci), loser = kdo právě prohrál partii
+  function renderNames(W, turn, loser) {
     const top = $("sackTop"); top.textContent = "";
+    const tk = `${gameNo(st)}-${st.q.length}-${st.p.length}-${turn}`, draw = tk !== turnKey; turnKey = tk;   // fixa se dokreslí jen při změně tahu, ne při každém překreslení
+    const sk = `${gameNo(st)}-${loser}`, fresh = !!loser && sk !== spillKey; if (loser) spillKey = sk;
     ["x", "o"].forEach((p, i) => {
       if (i === 1) { const v = document.createElement("span"); v.className = "vs"; v.textContent = "×"; v.setAttribute("aria-hidden", "true"); top.append(v); }
-      const wrap = document.createElement("span"); wrap.className = "pn " + p;
+      const wrap = document.createElement("span"); wrap.className = "pn " + p + (turn ? turn === p ? " turn" + (draw ? " draw" : "") : " idle" : "");
       const nl = document.createElement("span"); nl.className = "nl"; wrap.append(nl);   // kostka a jméno; titul je vedle, na úzkém pytli pod nimi
       if (st.sg === p && !ended(st)) nl.insertAdjacentHTML("beforeend", cubeSVG(`${nameOf(st, p)} má kostku cukru, jednou za partii může vrátit podaný hrnek`));
+      if (loser === p && p === "o") nl.insertAdjacentHTML("beforeend", SPILL);   // louže stojí vedle jména směrem do středu pytle
       const nm = document.createElement("span"); nm.className = "nm"; nm.textContent = nameOf(st, p); nl.append(nm);
+      if (loser === p && p === "x") nl.insertAdjacentHTML("beforeend", SPILL);
+      if (loser === p && fresh) nl.querySelector(".spill").classList.add("fresh");
+      if (turn === p) wrap.title = "Na tahu";
       const r = rankOf(W[p === "x" ? 0 : 1]);
       if (r) { const rk = document.createElement("i"); rk.className = "rk"; rk.style.fontStyle = "normal"; rk.textContent = RANKS[r - 1].name; wrap.append(rk); }
       top.append(wrap);
@@ -1145,8 +1205,9 @@ body[data-herna] .logo { pointer-events: none; }
     const g = grid(st);
     // sack labels: jména s tituly nahoře, hra a menu dne dole
     const W = isEnd && !solo ? seriesAfter(st) : st.w;   // ve sólu se výhry nepočítají, titul ani podšálek nevznikne
-    renderNames(W);
-    $("sackLeft").textContent = `${solo ? "Partie" : "Hra č."} ${gameNo(st)} · ${MENUS[st.m].name}`;
+    renderNames(W, !isEnd && (solo || !freeSeat()) ? ph.who : "", win ? other(win.p) : "");
+    $("sackLeft").innerHTML = menuPic(st.m);
+    $("sackLeft").append(`${solo ? "Partie" : "Hra č."} ${gameNo(st)} · ${MENUS[st.m].name}`);
     $("sackRight").textContent = `${st.p.length} / 16`;
     const hrn = document.createElement("span"); hrn.className = "d"; hrn.textContent = " hrnků"; $("sackRight").append(hrn);
 
@@ -1183,6 +1244,7 @@ body[data-herna] .logo { pointer-events: none; }
     board.dataset.m = st.m;
     board.setAttribute("aria-label", `Stůl 4 × 4, menu dne ${MENUS[st.m].name}: ${MENUS[st.m].short}`);
     board.classList.toggle("locked", !placing);
+    menuDemo();
 
     renderSides(ph);
     // pravidla s legendou vyplní volné místo pod výsledkem na desktopu, při hře zase ustoupí
@@ -1203,7 +1265,7 @@ body[data-herna] .logo { pointer-events: none; }
     const isEnd = ph.kind === "end", mine = canAct(), o = opp();
     const steam = $("oppSteam"), oppSlot = $("oppSlot");
     steam.toggleAttribute("hidden", true); oppSlot.hidden = true; oppSlot.className = "slot empty"; oppSlot.innerHTML = "";
-    $("oppSide").classList.remove("on");
+    $("oppSide").classList.remove("on", "idle");
     // top strip: the other side of the table
     if (!me) {
       $("oppTag").textContent = `${st.x} × ${st.o}`;
@@ -1223,7 +1285,8 @@ body[data-herna] .logo { pointer-events: none; }
         oppSlot.hidden = false; oppSlot.className = "slot"; oppSlot.innerHTML = cupBox(ph.cup);
         $("oppWhat").textContent = "Pokládá hrnek od tebe."; $("oppSub").textContent = st.t ? `podáno ${ago(st.t)}` : "";
       } else {
-        $("oppWhat").textContent = "Čeká na tebe."; $("oppSub").textContent = "";
+        $("oppWhat").textContent = "Jsi na tahu."; $("oppSub").textContent = `${nameOf(st, o)} čeká.`;
+        $("oppSide").classList.add("idle");
       }
     }
 
@@ -1470,8 +1533,10 @@ body[data-herna] .logo { pointer-events: none; }
       $("hoWho").innerHTML = "";
       const sp = document.createElement("span"); sp.textContent = "ti podává hrnek";
       $("hoWho").append(fromName, sp);
-      $("hoCup").innerHTML = cupSVG(id);
-      $("hoDesc").textContent = cap(cupLong(id));
+      // podšálek má pořád stejnou velikost, takže velký a malý hrnek jsou na něm hned poznat
+      $("hoCup").innerHTML = `<svg class="saucer" viewBox="0 0 100 100" aria-hidden="true"><circle cx="45" cy="50" r="46" fill="#E6DCCB"/><circle cx="45" cy="50" r="39.5" fill="none" stroke="rgba(30,42,74,.13)" stroke-width="2"/></svg>` + cupSVG(id);
+      // vlastnosti jako čipy, stejnými slovy jako čipy výhry (pro čtečku oddělené čárkou)
+      $("hoDesc").innerHTML = ATTR.map((a, b) => `<span class="chip">${id >> b & 1 ? a.on : a.off}<span class="sr-only">,</span></span>`).join("");
       const nap = $("hoNapkin");
       nap.hidden = !note; nap.textContent = note || "";
       ov.hidden = false; ov.focus();
@@ -1481,14 +1546,25 @@ body[data-herna] .logo { pointer-events: none; }
       else {
         anims.push(ov.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 260, fill: "both" }));
         anims.push($("hoWho").animate([{ opacity: 0, transform: "translateY(-12px)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 120, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" }));
-        // podání: hrnek se přisune od soupeřovy strany stolu, lehce přejede a zhoupne se do klidu
-        anims.push($("hoCup").animate([
-          { transform: "translateY(-64vh) scale(.46) rotate(-14deg)", opacity: .9, easing: "cubic-bezier(.3, .7, .3, 1)" },
-          { transform: "translateY(18px) scale(1.06) rotate(4deg)", opacity: 1, offset: .62, easing: "ease-in-out" },
-          { transform: "translateY(-4px) scale(.99) rotate(-1.5deg)", offset: .8, easing: "ease-in-out" },
+        // podání: soupeřova ruka přisune hrnek na podšálku od své strany stolu, lehce přejede a hrnek pustí
+        anims.push($("hoStage").animate([
+          { transform: "translateY(-70vh) rotate(-7deg)", easing: "cubic-bezier(.3, .7, .3, 1)" },
+          { transform: "translateY(16px) rotate(2deg)", offset: .62, easing: "ease-in-out" },
+          { transform: "translateY(-3px) rotate(-.8deg)", offset: .82, easing: "ease-in-out" },
           { transform: "none" },
-        ], { duration: 1100, delay: 140, fill: "both" }));
-        anims.push($("hoDesc").animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 900, fill: "both" }));
+        ], { duration: 1000, delay: 120, fill: "both" }));
+        // ruka ještě jednou ťukne a odtáhne se zpátky ke svému okraji; hrnek se po puštění zhoupne
+        anims.push($("hoArm").animate([
+          { transform: "none" },
+          { transform: "translateY(5px)", offset: .22 },
+          { transform: "translateY(-105vh)" },
+        ], { duration: 640, delay: 1180, easing: "cubic-bezier(.5, 0, .75, 0)", fill: "both" }));
+        anims.push($("hoCup").animate([
+          { transform: "none" }, { transform: "rotate(4deg)", offset: .35 }, { transform: "rotate(-2deg)", offset: .7 }, { transform: "none" },
+        ], { duration: 520, delay: 1300, easing: "ease-in-out" }));
+        [...$("hoDesc").children].forEach((c, i) => anims.push(c.animate([
+          { opacity: 0, transform: "translateY(8px) scale(.9)" }, { opacity: 1, transform: "none" },
+        ], { duration: 320, delay: 1250 + i * 90, easing: "cubic-bezier(.16, 1, .3, 1)", fill: "both" })));
         if (note) anims.push(nap.animate([
           { opacity: 0, transform: "translateY(30px) rotate(-14deg) scale(.9)" },
           { opacity: 1, transform: "rotate(-2deg)" },
@@ -1497,7 +1573,7 @@ body[data-herna] .logo { pointer-events: none; }
       const hold = note ? Math.min(5600, 3100 + 60 * note.length) : 3400;   // doba po přistání hrnku: čas přečíst si vzkaz
       if (!reduce) anims.push($("hoBar").animate([{ transform: "scaleX(1)" }, { transform: "scaleX(0)" }], { duration: hold, easing: "linear", fill: "both" }));
       else $("hoBar").style.transform = "scaleX(0)";
-      setTimeout(buzz, reduce ? 0 : 700);   // zabzučí při doskoku, ne při otevření
+      setTimeout(buzz, reduce ? 0 : 640);   // zabzučí při doskoku, ne při otevření
       let closed = false;
       const close = async () => {
         if (closed) return; closed = true;
@@ -1546,8 +1622,55 @@ body[data-herna] .logo { pointer-events: none; }
   function popWin() {
     if (calm()) return;
     $("board").querySelectorAll(".cell.win").forEach(c => c.classList.add("pop"));
+    if (winner(st)) beans(cellEl(st.p[st.p.length - 1]));
     const stamp = $("tStamp");
     if (!stamp.hidden) { stamp.classList.remove("in"); void stamp.offsetWidth; stamp.classList.add("in"); }
+  }
+
+  // Výherní chvilka: z posledního hrnku vyletí hrst kávových zrn, opíšou oblouk a spadnou z obrazovky
+  const BEAN = `<svg viewBox="0 0 14 18" aria-hidden="true"><ellipse cx="7" cy="9" rx="6" ry="8" fill="#6B3E26"/><ellipse cx="5.4" cy="7" rx="2" ry="3.4" fill="rgba(255,255,255,.14)"/><path d="M7.4 1.6C4.6 5.6 9.8 11.6 6.6 16.4" fill="none" stroke="#2A160E" stroke-width="1.7" stroke-linecap="round"/></svg>`;
+  function beans(fromEl) {
+    if (calm() || !fromEl) return;
+    const b = fromEl.getBoundingClientRect();
+    if (!b.width) return;
+    const cx = b.left + b.width / 2, cy = b.top + b.height / 2, sz = Math.max(.8, Math.min(1.4, b.width / 70));
+    for (let i = 0; i < 16; i++) {
+      const e = document.createElement("div"); e.className = "bean"; e.innerHTML = BEAN;
+      Object.assign(e.style, { left: cx - 7 + "px", top: cy - 9 + "px" });
+      document.body.append(e);
+      const ang = -Math.PI / 2 + (i / 15 - .5) * 2.6 + (Math.random() - .5) * .3, v = (190 + Math.random() * 170) * sz;
+      const vx = Math.cos(ang) * v, vy = Math.sin(ang) * v, g = 900 * sz, rot = (Math.random() - .5) * 900, s = (.8 + Math.random() * .5) * sz;
+      const T = 1.05 + Math.random() * .35, steps = 7;
+      const frames = Array.from({ length: steps + 1 }, (_, k) => {
+        const t = T * k / steps;
+        return { transform: `translate(${vx * t}px, ${vy * t + g * t * t / 2}px) rotate(${rot * k / steps}deg) scale(${k ? s : .3})`, opacity: k === steps ? 0 : 1 };
+      });
+      e.animate(frames, { duration: T * 1000, delay: 260 + i * 12, easing: "linear", fill: "both" }).finished.catch(() => {}).then(() => e.remove());
+    }
+  }
+
+  // Ukázka menu dne: na začátku partie se na prázdné jutě dvakrát ukáže tvar, který dnes navíc vyhrává
+  const MENU_DEMO = [null, { t: "sq", c: [9, 10, 13, 14] }, { t: "cor", c: [0, 3, 12, 15] }, { t: "tor", d: 1, c: [1, 6, 11, 12] }];
+  const demoSeen = new Set();
+  let demoEl = null;
+  function menuDemo() {
+    if (demoEl && demoEl.getAnimations().length && !demoEl.isConnected) $("board").append(demoEl);   // překreslení desky ukázku nepřeruší
+    const ex = MENU_DEMO[st.m], key = `${room ? room.id : "solo"}-${gameNo(st)}`;
+    if (!ex || st.p.length || ended(st) || calm() || demoSeen.has(key) || !$("handover").hidden) return;
+    demoSeen.add(key);
+    const dots = ex.c.map(i => `<ellipse class="dot" cx="${i % 4 + .5}" cy="${Math.floor(i / 4) + .5}" rx=".13" ry=".13"/>`).join("");
+    $("board").insertAdjacentHTML("beforeend", marksOver({ ln: ex }).replace('class="marks over', 'class="marks demo').replace("</svg>", dots + "</svg>"));
+    demoEl = $("board").lastElementChild; $("board").classList.add("demoing");
+    demoEl.animate([{ opacity: 0 }, { opacity: 1, offset: .14 }, { opacity: 1, offset: .38 }, { opacity: .15, offset: .5 }, { opacity: 1, offset: .62 }, { opacity: 1, offset: .86 }, { opacity: 0 }],
+      { duration: 2600, delay: 450, fill: "both" }).finished.catch(() => {}).then(() => { if (demoEl) demoEl.remove(); demoEl = null; $("board").classList.remove("demoing"); });
+  }
+  // Piktogram menu dne v patičce: tečky 4 × 4, plné jsou ty, které tvoří čáru navíc
+  function menuPic(m) {
+    const on = [[0, 5, 10, 15], [9, 10, 13, 14], [0, 3, 12, 15, 5, 6, 9, 10], [1, 6, 11, 12]][m];
+    const path = ["M2 2L14 14", "M6 10H10V14H6Z", "M.4 3.6V.4H3.6M12.4 .4H15.6V3.6M15.6 12.4V15.6H12.4M3.6 15.6H.4V12.4", "M6 2L16 12M0 12L2 14"][m];
+    let s = `<svg class="mpic" viewBox="0 0 16 16" aria-hidden="true"><path d="${path}"/>`;
+    for (let i = 0; i < 16; i++) s += `<circle cx="${2 + i % 4 * 4}" cy="${2 + Math.floor(i / 4) * 4}" r="1.15"${on.includes(i) ? ' class="on"' : ""}/>`;
+    return s + `</svg>`;
   }
 
   // ---------- zápis do místnosti ----------
